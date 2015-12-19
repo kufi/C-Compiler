@@ -51,15 +51,4 @@ int main(int argc, char **argv)
   printf("}\n");
 
   return 0;
-  /*createNFA("ab(c|d)*");
-
-  createNFA("(a|b)(c|d)");
-
-  createNFA("(a|b)|(c|d)(e|f)");
-  createNFA("(a|b)(c|d)|(e|f)");
-
-  createNFA("abcd");
-  createNFA("aa*bb*cc*dd*");
-  createNFA("ab|cd");
-  createNFA("b*|cd");*/
 }
