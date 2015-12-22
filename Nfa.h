@@ -14,6 +14,6 @@ typedef struct NFA {
   State *final;
 } NFA;
 
-NFA *createNFA(char *regex);
+NFA *buildNFA(char *regex);
 
 #endif

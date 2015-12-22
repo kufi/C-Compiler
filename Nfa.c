@@ -4,7 +4,29 @@
 #include "InfixConverter.h"
 #include "Nfa.h"
 
-NFA *createNFA(char *regex)
+State *createState(int id, State *out1, char outChar1, State *out2, char outChar2)
+{
+  State *state = malloc(sizeof(State));
+  state->id = id;
+  state->outChar1 = outChar1;
+  state->out1 = out1;
+
+  state->outChar2 = outChar2;
+  state->out2 = out2;
+
+  return state;
+}
+
+NFA *createNFA(State *start, State *final)
+{
+  NFA *nfa = malloc(sizeof(NFA));
+  nfa->start = start;
+  nfa->final = final;
+
+  return nfa;
+}
+
+NFA *buildNFA(char *regex)
 {
   char *postfix = infixToPostfix(regex);
 
@@ -21,25 +43,16 @@ NFA *createNFA(char *regex)
       NFA *nfa1 = nfaStack[--nfaPosition];
       NFA *nfa2 = nfaStack[--nfaPosition];
 
-      State *start = malloc(sizeof(State));
-      start->id = stateId++;
-
-      start->outChar1 = '\0';
-      start->out1 = nfa1->start;
-      start->outChar2 = '\0';
-      start->out2 = nfa2->start;
-
-      State *end = malloc(sizeof(State));
-      end->id = stateId++;
+      State *start = createState(stateId++, nfa1->start, '\0', nfa2->start, '\0');
+      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
 
       nfa1->final->outChar1 = '\0';
       nfa1->final->out1 = end;
+
       nfa2->final->outChar1 = '\0';
       nfa2->final->out1 = end;
 
-      NFA *alternationNFA = malloc(sizeof(NFA));
-      alternationNFA->start = start;
-      alternationNFA->final = end;
+      NFA *alternationNFA = createNFA(start, end);
 
       nfaStack[nfaPosition++] = alternationNFA;
     }
@@ -47,58 +60,32 @@ NFA *createNFA(char *regex)
     {
       NFA *nfa = nfaStack[--nfaPosition];
 
-      State *start = malloc(sizeof(State));
-      start->id = stateId++;
-
-      State *end = malloc(sizeof(State));
-      end->id = stateId++;
-
-      start->outChar1 = '\0';
-      start->out1 = nfa->start;
-      start->outChar2 = '\0';
-      start->out2 = end;
+      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
+      State *start = createState(stateId++, nfa->start, '\0', end, '\0');
 
       nfa->final->outChar1 = '\0';
       nfa->final->out1 = end;
       nfa->final->outChar2 = '\0';
       nfa->final->out2 = nfa->start;
 
-      NFA *closureNFA = malloc(sizeof(NFA));
-      closureNFA->start = start;
-      closureNFA->final = end;
-
-      nfaStack[nfaPosition++] = closureNFA;
+      nfaStack[nfaPosition++] = createNFA(start, end);
     }
     else if(c == '.')
     {
       NFA *nfa2 = nfaStack[--nfaPosition];
       NFA *nfa1 = nfaStack[--nfaPosition];
 
-      NFA *concatNFA = malloc(sizeof(struct NFA));
-      concatNFA->start = nfa1->start;
-      concatNFA->final = nfa2->final;
-
       nfa1->final->outChar1 = '\0';
       nfa1->final->out1 = nfa2->start;
 
-      nfaStack[nfaPosition++] = concatNFA;
+      nfaStack[nfaPosition++] = createNFA(nfa1->start, nfa2->final);
     }
     else
     {
-      State *state = malloc(sizeof(State));
-      state->id = stateId++;
-      state->outChar1 = c;
+      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
+      State *start = createState(stateId++, end, c, NULL, '\0');
 
-      State *finalState = malloc(sizeof(State));
-      finalState->id = stateId++;
-
-      state->out1 = finalState;
-
-      NFA *nfa = malloc(sizeof(struct NFA));
-      nfa->start = state;
-      nfa->final = finalState;
-
-      nfaStack[nfaPosition++] = nfa;
+      nfaStack[nfaPosition++] = createNFA(start, end);
     }
   }
 

@@ -2,53 +2,59 @@
 #include <stdio.h>
 #include "Nfa.h"
 
-typedef struct PrintState {
+typedef struct PrinterState {
   int position;
   int *usedIds;
-} PrintState;
+} PrinterState;
 
-void printNFA(State *state, PrintState *printState)
+void printState(State *state, PrinterState *printerState)
 {
-  for(int i = 0; i < printState->position; i++)
+  for(int i = 0; i < printerState->position; i++)
   {
-    if(printState->usedIds[i] == state->id) return;
+    if(printerState->usedIds[i] == state->id) return;
   }
 
-  printState->usedIds[printState->position++] = state->id;
+  printerState->usedIds[printerState->position++] = state->id;
 
   if(state->out1 != NULL)
   {
     printf("%i -> %i[label=\"%c\"]\n", state->id, state->out1->id, state->outChar1);
-    printNFA(state->out1, printState);
+    printState(state->out1, printerState);
   }
 
   if(state->out2 != NULL)
   {
     printf("%i -> %i[label=\"%c\"]\n", state->id, state->out2->id, state->outChar2);
-    printNFA(state->out2, printState);
+    printState(state->out2, printerState);
   }
+}
+
+void printNFA(NFA *nfa)
+{
+  State *state = nfa->start;
+  PrinterState *printerState = malloc(sizeof(PrinterState));
+  printerState->usedIds = malloc(sizeof(int) * (nfa->final->id - 1));
+  printerState->position = 0;
+
+  printf("digraph {\n");
+  printState(state, printerState);
+  printf("}\n");
 }
 
 int main(int argc, char **argv)
 {
-  createNFA("abc");
+  buildNFA("abc");
 
-  createNFA("a*");
+  buildNFA("a*");
 
-  createNFA("a|b");
+  buildNFA("a|b");
 
-  NFA *finalNFA = createNFA("a(b|c)*");
+  NFA *finalNFA = buildNFA("a(b|c)*");
+  printNFA(finalNFA);
 
-  createNFA("(1|2|3)(1|2|3)*");
+  DFA *dfa = buildNFA(finalNFA);
 
-  State *state = finalNFA->start;
-  PrintState *printState = malloc(sizeof(PrintState));
-  printState->usedIds = malloc(sizeof(int) * (finalNFA->final->id - 1));
-  printState->position = 0;
-
-  printf("digraph {\n");
-  printNFA(state, printState);
-  printf("}\n");
+  buildNFA("(1|2|3)(1|2|3)*");
 
   return 0;
 }
