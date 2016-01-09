@@ -1,13 +1,14 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Nfa.h"
+#include "Dfa.h"
 
 typedef struct PrinterState {
   int position;
   int *usedIds;
 } PrinterState;
 
-void printState(State *state, PrinterState *printerState)
+void printState(NFAState *state, PrinterState *printerState)
 {
   for(int i = 0; i < printerState->position; i++)
   {
@@ -31,7 +32,7 @@ void printState(State *state, PrinterState *printerState)
 
 void printNFA(NFA *nfa)
 {
-  State *state = nfa->start;
+  NFAState *state = nfa->start;
   PrinterState *printerState = malloc(sizeof(PrinterState));
   printerState->usedIds = malloc(sizeof(int) * (nfa->final->id - 1));
   printerState->position = 0;
@@ -41,20 +42,39 @@ void printNFA(NFA *nfa)
   printf("}\n");
 }
 
+void printDFA(DFA *dfa)
+{
+  printf("digraph {\n");
+  for(int i = 0; i < dfa->numberOfStates; i++)
+  {
+    for(int j = 0; j < dfa->numberOfStates; j++)
+    {
+      DFATransition *transition = dfa->transitions[i][j];
+
+      if(transition != NULL)
+      {
+        printf("%i -> %i[label=\"", i, j);
+        for(int c = 0; c < transition->characterSize; c++)
+        {
+          printf("%c", transition->characters[c]);
+        }
+        printf("\"]\n");
+      }
+    }
+  }
+  printf("}\n");
+}
+
 int main(int argc, char **argv)
 {
-  buildNFA("abc");
+  NFA *nfa = buildNFA("a(b|c)*");
+  //printNFA(nfa);
 
-  buildNFA("a*");
+  char characterSet[3] = {'a', 'b', 'c'};
 
-  buildNFA("a|b");
+  DFA *dfa = subsetConstruction(nfa, characterSet, 3);
 
-  NFA *finalNFA = buildNFA("a(b|c)*");
-  printNFA(finalNFA);
-
-  DFA *dfa = buildNFA(finalNFA);
-
-  buildNFA("(1|2|3)(1|2|3)*");
+  printDFA(dfa);
 
   return 0;
 }

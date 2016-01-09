@@ -3,10 +3,16 @@
 
 #include "Nfa.h"
 
-typedef struct DFA {
+typedef struct DFATransition {
+  int characterSize;
+  char *characters;
+} DFATransition;
 
+typedef struct DFA {
+  int numberOfStates;
+  DFATransition ***transitions;
 } DFA;
 
-DFA *buildNFA(NFA *nfa);
+DFA *subsetConstruction(NFA *nfa, char *characterSet, int characterSetSize);
 
 #endif

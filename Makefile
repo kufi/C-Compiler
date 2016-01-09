@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -std=c99
-HEADERS = InfixConverter.h Nfa.h
-OBJECTS = main.o Nfa.o InfixConverter.o
+HEADERS = InfixConverter.h Nfa.h Dfa.h
+OBJECTS = main.o Nfa.o Dfa.o InfixConverter.o
 
 default: scanner
 

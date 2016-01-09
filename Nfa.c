@@ -4,9 +4,9 @@
 #include "InfixConverter.h"
 #include "Nfa.h"
 
-State *createState(int id, State *out1, char outChar1, State *out2, char outChar2)
+NFAState *createState(int id, NFAState *out1, char outChar1, NFAState *out2, char outChar2)
 {
-  State *state = malloc(sizeof(State));
+  NFAState *state = malloc(sizeof(NFAState));
   state->id = id;
   state->outChar1 = outChar1;
   state->out1 = out1;
@@ -17,7 +17,7 @@ State *createState(int id, State *out1, char outChar1, State *out2, char outChar
   return state;
 }
 
-NFA *createNFA(State *start, State *final)
+NFA *createNFA(NFAState *start, NFAState *final)
 {
   NFA *nfa = malloc(sizeof(NFA));
   nfa->start = start;
@@ -43,8 +43,8 @@ NFA *buildNFA(char *regex)
       NFA *nfa1 = nfaStack[--nfaPosition];
       NFA *nfa2 = nfaStack[--nfaPosition];
 
-      State *start = createState(stateId++, nfa1->start, '\0', nfa2->start, '\0');
-      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
+      NFAState *start = createState(stateId++, nfa1->start, '\0', nfa2->start, '\0');
+      NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
 
       nfa1->final->outChar1 = '\0';
       nfa1->final->out1 = end;
@@ -60,8 +60,8 @@ NFA *buildNFA(char *regex)
     {
       NFA *nfa = nfaStack[--nfaPosition];
 
-      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
-      State *start = createState(stateId++, nfa->start, '\0', end, '\0');
+      NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
+      NFAState *start = createState(stateId++, nfa->start, '\0', end, '\0');
 
       nfa->final->outChar1 = '\0';
       nfa->final->out1 = end;
@@ -82,8 +82,8 @@ NFA *buildNFA(char *regex)
     }
     else
     {
-      State *end = createState(stateId++, NULL, '\0', NULL, '\0');
-      State *start = createState(stateId++, end, c, NULL, '\0');
+      NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
+      NFAState *start = createState(stateId++, end, c, NULL, '\0');
 
       nfaStack[nfaPosition++] = createNFA(start, end);
     }

@@ -1,17 +1,17 @@
 #ifndef NFA_HEADER
 #define NFA_HEADER
 
-typedef struct State {
+typedef struct NFAState {
   int id;
   char outChar1;
   char outChar2;
-  struct State *out1;
-  struct State *out2;
-} State;
+  struct NFAState *out1;
+  struct NFAState *out2;
+} NFAState;
 
 typedef struct NFA {
-  State *start;
-  State *final;
+  NFAState *start;
+  NFAState *final;
 } NFA;
 
 NFA *buildNFA(char *regex);
