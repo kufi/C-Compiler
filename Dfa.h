@@ -22,8 +22,6 @@ typedef struct DFA {
   DFAState *start;
 } DFA;
 
-DFA *subsetConstruction(NFA *nfa, char *characterSet);
-
-DFA *hopcroft(DFA *dfa);
+DFAState *createDFAState(int id, int categoryId);
 
 #endif

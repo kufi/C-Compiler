@@ -1,7 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "Nfa.h"
-#include "Dfa.h"
+#include "SubsetConstruction.h"
+#include "Hopcroft.h"
 #include "Scanner.h"
 #include <string.h>
 
