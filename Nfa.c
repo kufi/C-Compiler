@@ -14,6 +14,8 @@ NFAState *createState(int id, NFAState *out1, char outChar1, NFAState *out2, cha
   state->outChar2 = outChar2;
   state->out2 = out2;
 
+  state->accepting = false;
+
   return state;
 }
 
@@ -22,17 +24,18 @@ NFA *createNFA(NFAState *start, NFAState *final)
   NFA *nfa = malloc(sizeof(NFA));
   nfa->start = start;
   nfa->final = final;
+  nfa->final->accepting = true;
 
   return nfa;
 }
 
-NFA *buildNFA(char *regex)
+NFA *buildNFA(int startId, char *regex)
 {
   char *postfix = infixToPostfix(regex);
 
   struct NFA **nfaStack = malloc(sizeof(postfix)/sizeof(postfix[0]) * sizeof(NFA));
   int nfaPosition = 0;
-  int stateId = 0;
+  int stateId = startId;
 
   for(int i = 0; postfix[i] != '\0'; i++)
   {
@@ -42,6 +45,9 @@ NFA *buildNFA(char *regex)
     {
       NFA *nfa1 = nfaStack[--nfaPosition];
       NFA *nfa2 = nfaStack[--nfaPosition];
+
+      nfa1->final->accepting = false;
+      nfa2->final->accepting = false;
 
       NFAState *start = createState(stateId++, nfa1->start, '\0', nfa2->start, '\0');
       NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
@@ -60,8 +66,11 @@ NFA *buildNFA(char *regex)
     {
       NFA *nfa = nfaStack[--nfaPosition];
 
+      nfa->final->accepting = false;
+
+      NFAState *start = createState(stateId++, nfa->start, '\0', NULL, '\0');
       NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
-      NFAState *start = createState(stateId++, nfa->start, '\0', end, '\0');
+      start->out2 = end;
 
       nfa->final->outChar1 = '\0';
       nfa->final->out1 = end;
@@ -75,6 +84,9 @@ NFA *buildNFA(char *regex)
       NFA *nfa2 = nfaStack[--nfaPosition];
       NFA *nfa1 = nfaStack[--nfaPosition];
 
+      nfa1->final->accepting = false;
+      nfa2->final->accepting = false;
+
       nfa1->final->outChar1 = '\0';
       nfa1->final->out1 = nfa2->start;
 
@@ -82,8 +94,9 @@ NFA *buildNFA(char *regex)
     }
     else
     {
+      NFAState *start = createState(stateId++, NULL, c, NULL, '\0');
       NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
-      NFAState *start = createState(stateId++, end, c, NULL, '\0');
+      start->out1 = end;
 
       nfaStack[nfaPosition++] = createNFA(start, end);
     }
