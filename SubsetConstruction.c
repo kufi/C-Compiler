@@ -21,6 +21,18 @@ typedef struct Transition {
   char character;
 } Transition;
 
+typedef struct ConfigurationList {
+  int usedConfigurations;
+  int configurationSize;
+  Configuration **configurations;
+} ConfigurationList;
+
+typedef struct TransitionList {
+  int usedTransitions;
+  int transitionSize;
+  Transition **transitions;
+} TransitionList;
+
 Configuration *createConfiguration(int id, int size)
 {
   Configuration *configuration = malloc(sizeof(Configuration));
@@ -56,14 +68,11 @@ bool configurationEquals(Configuration *first, Configuration *second)
   return true;
 }
 
-Configuration *tryGetExistingConfiguration(Configuration **usedConfigurations, int usedConfigurationSize, Configuration *check)
+Configuration *tryGetExistingConfiguration(ConfigurationList *list, Configuration *check)
 {
-  for(int i = 0; i < usedConfigurationSize; i++)
+  for(int i = 0; i < list->usedConfigurations; i++)
   {
-    if(configurationEquals(usedConfigurations[i], check))
-    {
-      return usedConfigurations[i];
-    }
+    if(configurationEquals(list->configurations[i], check)) return list->configurations[i];
   }
 
   return NULL;
@@ -176,84 +185,63 @@ Transition *createTransition(Configuration *from, Configuration *to, char c)
   return transition;
 }
 
-DFA *subsetConstruction(NFA *nfa, char *characterSet)
+TransitionList *createTransitionList()
 {
-  Configuration *startConfiguration = createConfiguration(0, 1);
-  startConfiguration->states[0] = nfa->start;
+  TransitionList *list = malloc(sizeof(TransitionList));
+  list->usedTransitions = 0;
+  list->transitionSize = 10;
+  list->transitions = malloc(sizeof(Transition *) * list->transitionSize);
+  return list;
+}
 
-  Configuration *q0 = eClosure(startConfiguration);
-
-  int usedConfigurations = 0;
-  int configurationSize = 10;
-  Configuration **configurations = malloc(sizeof(Configuration *) * configurationSize);
-  configurations[usedConfigurations++] = q0;
-
-  int usedTransitions = 0;
-  int transitionSize = 10;
-  Transition **transitions = malloc(sizeof(Transition *) * transitionSize);
-
-  ConfigurationWorklistItem *nextWorklistItem = createWorklistItem(q0, NULL);
-  ConfigurationWorklistItem *lastWorklistItem = nextWorklistItem;
-
-  while(nextWorklistItem != NULL)
+void addTransition(TransitionList *list, Transition *transition)
+{
+  if(list->usedTransitions == list->transitionSize)
   {
-    ConfigurationWorklistItem *check = nextWorklistItem;
-
-    for(int i = 0; i < strlen(characterSet); i++)
-    {
-      char character = characterSet[i];
-      Configuration *charConfiguration = eClosure(delta(check->configuration, character));
-
-      if(charConfiguration->size == 0) continue;
-
-      Configuration *existingCharConfiguration = tryGetExistingConfiguration(configurations, usedConfigurations, charConfiguration);
-
-      if(existingCharConfiguration == NULL)
-      {
-        charConfiguration->id = usedConfigurations;
-        configurations[usedConfigurations++] = charConfiguration;
-
-        if(usedConfigurations >= configurationSize)
-        {
-          configurations = realloc(configurations, sizeof(Configuration *) * configurationSize * 2);
-          configurationSize = configurationSize * 2;
-        }
-
-        ConfigurationWorklistItem *newWorklistItem = createWorklistItem(charConfiguration, NULL);
-        lastWorklistItem->next = newWorklistItem;
-        lastWorklistItem = newWorklistItem;
-      }
-      else
-      {
-        charConfiguration = existingCharConfiguration;
-      }
-
-      transitions[usedTransitions++] = createTransition(check->configuration, charConfiguration, character);
-
-      if(usedTransitions >= transitionSize)
-      {
-        transitions = realloc(transitions, sizeof(Transition *) * transitionSize * 2);
-        transitionSize = transitionSize * 2;
-      }
-    }
-
-    nextWorklistItem = nextWorklistItem->next;
+    list->transitionSize = list->transitionSize * 2;
+    list->transitions = realloc(list->transitions, sizeof(Transition *) * list->transitionSize);
   }
 
-  DFA *dfa = malloc(sizeof(DFA));
+  list->transitions[list->usedTransitions++] = transition;
+}
 
-  dfa->stateSize = usedConfigurations;
-  dfa->states = malloc(sizeof(DFAState *) * usedConfigurations);
+ConfigurationList *createConfigurationList()
+{
+  ConfigurationList *list = malloc(sizeof(ConfigurationList));
+  list->usedConfigurations = 0;
+  list->configurationSize = 10;
+  list->configurations = malloc(sizeof(Configuration *) * list->configurationSize);
+  return list;
+}
 
-  for(int i = 0; i < usedConfigurations; i++)
+void addConfiguration(ConfigurationList *list, Configuration *configuration)
+{
+  if(list->usedConfigurations == list->configurationSize)
   {
-    Configuration *config = configurations[i];
+    list->configurationSize = list->configurationSize * 2;
+    list->configurations = realloc(list->configurations, sizeof(Configuration *) * list->configurationSize);
+  }
+
+  list->configurations[list->usedConfigurations++] = configuration;
+}
+
+void createStatesFromConfigurations(DFA *dfa, ConfigurationList *configurations)
+{
+  dfa->stateSize = configurations->usedConfigurations;
+  dfa->states = malloc(sizeof(DFAState *) * configurations->usedConfigurations);
+
+  for(int i = 0; i < configurations->usedConfigurations; i++)
+  {
+    Configuration *config = configurations->configurations[i];
     dfa->states[config->id] = createDFAState(config->id, getMinimalCategoryId(config));
   }
+}
 
-  for(int i = 0; i < usedTransitions; i++)
+void createDFATransitions(DFA *dfa, TransitionList *transitions)
+{
+  for(int i = 0; i < transitions->usedTransitions; i++)
   {
-    Transition *trans = transitions[i];
+    Transition *trans = transitions->transitions[i];
     DFAState *from = dfa->states[trans->from->id];
     DFAState *to = dfa->states[trans->to->id];
 
@@ -269,7 +257,60 @@ DFA *subsetConstruction(NFA *nfa, char *characterSet)
 
     from->transitions[from->usedTransitions++] = dfaTrans;
   }
+}
 
+DFA *subsetConstruction(NFA *nfa, char *characterSet)
+{
+  Configuration *startConfiguration = createConfiguration(0, 1);
+  startConfiguration->states[0] = nfa->start;
+
+  Configuration *q0 = eClosure(startConfiguration);
+
+  ConfigurationList *configurations = createConfigurationList();
+  addConfiguration(configurations, q0);
+
+  TransitionList *transitions = createTransitionList();
+
+  ConfigurationWorklistItem *nextWorklistItem = createWorklistItem(q0, NULL);
+  ConfigurationWorklistItem *lastWorklistItem = nextWorklistItem;
+
+  while(nextWorklistItem != NULL)
+  {
+    ConfigurationWorklistItem *check = nextWorklistItem;
+
+    for(int i = 0; i < strlen(characterSet); i++)
+    {
+      char character = characterSet[i];
+      Configuration *charConfiguration = eClosure(delta(check->configuration, character));
+
+      if(charConfiguration->size == 0) continue;
+
+      Configuration *existingCharConfiguration = tryGetExistingConfiguration(configurations, charConfiguration);
+
+      if(existingCharConfiguration == NULL)
+      {
+        charConfiguration->id = configurations->usedConfigurations;
+
+        addConfiguration(configurations, charConfiguration);
+
+        ConfigurationWorklistItem *newWorklistItem = createWorklistItem(charConfiguration, NULL);
+        lastWorklistItem->next = newWorklistItem;
+        lastWorklistItem = newWorklistItem;
+      }
+      else
+      {
+        charConfiguration = existingCharConfiguration;
+      }
+
+      addTransition(transitions, createTransition(check->configuration, charConfiguration, character));
+    }
+
+    nextWorklistItem = nextWorklistItem->next;
+  }
+
+  DFA *dfa = malloc(sizeof(DFA));
+  createStatesFromConfigurations(dfa, configurations);
+  createDFATransitions(dfa, transitions);
   dfa->start = dfa->states[0];
 
   return dfa;

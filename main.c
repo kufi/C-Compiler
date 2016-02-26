@@ -88,36 +88,26 @@ void printDFA(DFA *dfa)
 
 int main(int argc, char **argv)
 {
-  /*NFA *nfa = buildNFA(0, "a(b|c)*");
-  DFA *dfa = hopcroft(subsetConstruction(nfa, "abc"));
-  printDFA(dfa);*/
-
-  /*
   ScannerConfig *config = createScannerConfig(3);
-  addCategory(config, "first", "fee");
-  addCategory(config, "second", "fie");
-
-  DFA *dfa2 = hopcroft(subsetConstruction(config->nfa, "fie"));
-
-  printDFA(dfa2);
-  */
-
-  /*NFA *nfa = buildNFA(0, "a|b|c");
-  DFA *dfa = subsetConstruction(nfa, "abc");
-  printDFA(dfa);*/
-
-  ScannerConfig *config = createScannerConfig(3);
-  addCategory(config, "first", "a(b|c)*");
-  addCategory(config, "second", "ab*a");
-  addCategory(config, "third", "d|ef*");
-  addCategory(config, "fourth", "a(fee|fie)");
-  addCategory(config, "fifth", "diff");
-  addCategory(config, "fee", "fee");
+  addCategory(config, "abc", "a(b|c)*");
   addCategory(config, "fie", "fie");
+  addCategory(config, "fee", "fee");
+  addCategory(config, " ", "( |\n)( |\n)*");
 
-  DFA *dfa2 = hopcroft(subsetConstruction(config->nfa, "abcdefi"));
+  Scanner *scanner = createScanner(config, "abbbbcbbbbbcccbb fee fie fee fie \n     feefie");
 
-  printDFA(dfa2);
+  while(hasMoreWords(scanner))
+  {
+    Word word = nextWord(scanner);
+
+    if(word.category == NULL)
+    {
+      printf("Could not get category for input\n");
+      break;
+    }
+
+    printf("'%s' Category: %s\n", word.lexeme, word.category->name);
+  }
 
   return 0;
 }
