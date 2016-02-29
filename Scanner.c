@@ -5,12 +5,7 @@
 #include "Nfa.h"
 #include "SubsetConstruction.h"
 #include "Hopcroft.h"
-
-typedef struct StringBuilder {
-  int used;
-  int size;
-  char *string;
-} StringBuilder;
+#include "StringBuilder.h"
 
 typedef struct DFAStateStack {
   int size;
@@ -86,17 +81,6 @@ Scanner *createScanner(ScannerConfig *config, char *text)
   return scanner;
 }
 
-StringBuilder createStringBuilder()
-{
-  StringBuilder builder;
-  builder.used = 0;
-  builder.size = 10;
-  builder.string = malloc(sizeof(char) * builder.size);
-  builder.string[0] = '\0';
-
-  return builder;
-}
-
 DFAStateStack createStack()
 {
   DFAStateStack stack;
@@ -124,23 +108,6 @@ DFAState *pop(DFAStateStack *stack)
   return stack->states[--stack->pointer];
 }
 
-void appendChar(StringBuilder *builder, char c)
-{
-  if(builder->used  + 1 == builder->size)
-  {
-    builder->size = builder->size * 2;
-    builder->string = realloc(builder->string, sizeof(char) * builder->size);
-  }
-
-  builder->string[builder->used++] = c;
-  builder->string[builder->used] = '\0';
-}
-
-void removeLastChar(StringBuilder *builder)
-{
-  builder->string[--builder->used] = '\0';
-}
-
 char nextChar(Scanner *scanner)
 {
   return scanner->text[scanner->textPosition++];
@@ -153,6 +120,8 @@ void rollbackChar(Scanner *scanner)
 
 DFAState *getNextState(Scanner *scanner, DFAState *state, char c)
 {
+  if(c == '\0') return scanner->internalStates.error;
+
   for(int i = 0; i < state->usedTransitions; i++)
   {
     DFATransition *trans = state->transitions[i];
@@ -189,6 +158,8 @@ Word nextWord(Scanner *scanner)
   push(&stack, scanner->internalStates.bad);
 
   DFAState *state = scanner->dfa->start;
+
+  printf("%i %s\n", scanner->textPosition, scanner->text);
 
   while(state != scanner->internalStates.error)
   {

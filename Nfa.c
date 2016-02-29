@@ -32,7 +32,7 @@ NFA *createNFA(NFAState *start, NFAState *final)
 NFA *buildNFA(int startId, char *regex)
 {
   char *postfix = infixToPostfix(regex);
-
+  
   struct NFA **nfaStack = malloc(sizeof(postfix)/sizeof(postfix[0]) * sizeof(NFA));
   int nfaPosition = 0;
   int stateId = startId;
@@ -40,8 +40,15 @@ NFA *buildNFA(int startId, char *regex)
   for(int i = 0; postfix[i] != '\0'; i++)
   {
     char c = postfix[i];
+    bool escaped = false;
 
-    if(c == '|')
+    if(c == '\\')
+    {
+      escaped = true;
+      c = postfix[++i];
+    }
+
+    if(c == '|' && !escaped)
     {
       NFA *nfa1 = nfaStack[--nfaPosition];
       NFA *nfa2 = nfaStack[--nfaPosition];
@@ -62,7 +69,7 @@ NFA *buildNFA(int startId, char *regex)
 
       nfaStack[nfaPosition++] = alternationNFA;
     }
-    else if(c == '*')
+    else if(c == '*' && !escaped)
     {
       NFA *nfa = nfaStack[--nfaPosition];
 
@@ -79,7 +86,7 @@ NFA *buildNFA(int startId, char *regex)
 
       nfaStack[nfaPosition++] = createNFA(start, end);
     }
-    else if(c == '.')
+    else if(c == '.' && !escaped)
     {
       NFA *nfa2 = nfaStack[--nfaPosition];
       NFA *nfa1 = nfaStack[--nfaPosition];

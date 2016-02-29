@@ -89,12 +89,14 @@ void printDFA(DFA *dfa)
 int main(int argc, char **argv)
 {
   ScannerConfig *config = createScannerConfig(3);
-  addCategory(config, "abc", "a(b|c)*");
-  addCategory(config, "fie", "fie");
-  addCategory(config, "fee", "fee");
+  addCategory(config, "number", "(-|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*");
+  addCategory(config, "*", "\\*");
+  addCategory(config, "/", "/");
+  addCategory(config, "+", "+");
+  addCategory(config, "-", "-");
   addCategory(config, " ", "( |\n)( |\n)*");
 
-  Scanner *scanner = createScanner(config, "abbbbcbbbbbcccbb fee fie fee fie \n     feefie");
+  Scanner *scanner = createScanner(config, "123 + 438 * -44");
 
   while(hasMoreWords(scanner))
   {

@@ -1,11 +1,11 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include "StringBuilder.h"
 
 typedef struct PostfixState {
   char operatorStack[100];
   int operatorPosition;
-  int outputLast;
-  char *output;
+  StringBuilder output;
 } PostfixState;
 
 int getOperatorPrecedence(char op)
@@ -23,7 +23,7 @@ int getOperatorPrecedence(char op)
 
 void addToOutput(struct PostfixState *state, char c)
 {
-  state->output[state->outputLast++] = c;
+  appendChar(&state->output, c);
 }
 
 char popOperator(struct PostfixState *state)
@@ -44,15 +44,26 @@ char peekOperator(struct PostfixState *state)
 char *infixToPostfix(char *regex)
 {
   struct PostfixState state;
-  state.output = malloc(sizeof(regex)/sizeof(regex[0]) * 2);
-  state.outputLast = 0;
+  state.output = createStringBuilder();
   state.operatorPosition = 0;
 
   for(int i = 0; regex[i] != '\0'; i++)
   {
     char c = regex[i];
+    bool escapedChar = false;
 
-    if(c == '|' || c == '*')
+    if(c == '\\')
+    {
+      c = regex[++i];
+      escapedChar = true;
+    }
+
+    if(escapedChar)
+    {
+      addToOutput(&state, '\\');
+      addToOutput(&state, c);
+    }
+    else if(c == '|' || c == '*')
     {
       while(state.operatorPosition > 0 && getOperatorPrecedence(peekOperator(&state)) > getOperatorPrecedence(c))
       {
@@ -95,5 +106,5 @@ char *infixToPostfix(char *regex)
   while(state.operatorPosition > 0) addToOutput(&state, popOperator(&state));
 
   addToOutput(&state, '\0');
-  return state.output;
+  return state.output.string;
 }
