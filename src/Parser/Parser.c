@@ -258,7 +258,7 @@ Production *getProductionForSymbol(Grammar *grammar, char *symbol)
 
 int getLookaheadSymbolsSize(LR1Item *item)
 {
-  return (item->symbolSize - item->dotPosition) + 1;
+  return item->symbolSize - item->dotPosition;
 }
 
 char **getLookaheadSymbols(LR1Item *item, char *lookahead)
@@ -267,7 +267,7 @@ char **getLookaheadSymbols(LR1Item *item, char *lookahead)
   char **lookaheadsSymbols = malloc(sizeof(char *) * remainingSymbols);
 
   int lookaheadPosition = 0;
-  for(int i = item->dotPosition; i < item->symbolSize; i++)
+  for(int i = item->dotPosition + 1; i < item->symbolSize; i++)
   {
     lookaheadsSymbols[lookaheadPosition++] = item->symbols[i];
   }
