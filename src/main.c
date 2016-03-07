@@ -1,10 +1,12 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include "Nfa.h"
-#include "SubsetConstruction.h"
-#include "Hopcroft.h"
-#include "Scanner.h"
 #include <string.h>
+#include "Scanner/Nfa.h"
+#include "Scanner/SubsetConstruction.h"
+#include "Scanner/Hopcroft.h"
+#include "Scanner/Scanner.h"
+#include "Parser/Grammar.h"
+#include "Parser/Parser.h"
 
 typedef struct PrinterState {
   int position;
@@ -86,19 +88,56 @@ void printDFA(DFA *dfa)
   printf("}\n");
 }
 
+void printGrammar(Grammar *grammar)
+{
+  for(int i = 0; i < grammar->usedProductions; i++)
+  {
+    Production *production = grammar->productions[i];
+    printf("%s\n", production->name);
+    for(int j = 0; j < production->usedRules; j++)
+    {
+      Rule *rule = production->rules[j];
+      printf(" |");
+
+      if(rule->symbols[0] == EMPTY)
+      {
+        printf("\n");
+        continue;
+      }
+      for(int k = 0; k < rule->usedSymbols; k++)
+      {
+        printf(" %s", rule->symbols[k]);
+      }
+      printf("\n");
+    }
+  }
+}
+
 int main(int argc, char **argv)
 {
   ScannerConfig *config = createScannerConfig(3);
-  addCategory(config, "number", "(-|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*");
+  /*addCategory(config, "number", "(-|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*");
   addCategory(config, "*", "\\*");
   addCategory(config, "/", "/");
   addCategory(config, "+", "+");
   addCategory(config, "-", "-");
-  addCategory(config, " ", "( |\n)( |\n)*");
+  addCategory(config, " ", "( |\n)( |\n)*");*/
+
+  addCategory(config, "(", "\\(");
+  addCategory(config, ")", "\\)");
+
+  /*addCategory(config, "num", "num");
+  addCategory(config, "name", "name");
+  addCategory(config, "*", "\\*");
+  addCategory(config, "/", "/");
+  addCategory(config, "+", "+");
+  addCategory(config, "-", "-");
+  addCategory(config, "(", "\\(");
+  addCategory(config, ")", "\\)");*/
 
   Scanner *scanner = createScanner(config, "123 + 438 * -44");
 
-  while(hasMoreWords(scanner))
+  /*while(hasMoreWords(scanner))
   {
     Word word = nextWord(scanner);
 
@@ -109,7 +148,21 @@ int main(int argc, char **argv)
     }
 
     printf("'%s' Category: %s\n", word.lexeme, word.category->name);
-  }
+  }*/
+
+  Grammar *grammar = createGrammar();
+
+  addProduction(grammar, "Goal", "List", END);
+  addProduction(grammar, "List", "List Pair", "Pair", END);
+  addProduction(grammar, "Pair", "( Pair )", EMPTY, END);
+  /*addProduction(grammar, "Expr", "Term Expr2", END);
+  addProduction(grammar, "Expr2", "+ Term Expr2", "- Term Expr2", EMPTY, END);
+  addProduction(grammar, "Term", "Factor Term2", END);
+  addProduction(grammar, "Term2", "* Factor Term2", "/ Factor Term2", EMPTY, END);
+  addProduction(grammar, "Factor", "( Expr )", "num", "name", END);*/
+  printGrammar(grammar);
+
+  createParser(grammar, config);
 
   return 0;
 }
