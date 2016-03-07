@@ -1,10 +1,12 @@
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include "Grammar.h"
 #include "Parser.h"
 #include "../Scanner/Scanner.h"
 
 typedef struct LR1Item {
+  char *production;
   int dotPosition;
   int symbolSize;
   char **symbols;
@@ -30,12 +32,14 @@ typedef struct FirstSets {
   FirstSet **sets;
 } FirstSets;
 
-LR1Item *createLR1Item(Rule *rule)
+LR1Item *createLR1Item(char *name, Rule *rule, char *lookahead)
 {
   LR1Item *item = malloc(sizeof(LR1Item));
+  item->production = strdup(name);
   item->dotPosition = 0;
   item->symbolSize = rule->usedSymbols;
-  item->lookahead = "";
+  item->symbols = malloc(sizeof(char *) * item->symbolSize);
+  item->lookahead = lookahead;
 
   for(int i = 0; i < rule->usedSymbols; i++)
   {
@@ -50,11 +54,12 @@ LR1ItemList *createLR1Items(Production *production)
   LR1ItemList *list = malloc(sizeof(LR1ItemList));
   list->usedItems = 0;
   list->itemSize = production->usedRules;
+  list->items = malloc(sizeof(LR1Item *) * list->itemSize);
 
   for(int i =0; i < production->usedRules; i++)
   {
     Rule *rule = production->rules[i];
-    list->items[list->usedItems++] = createLR1Item(rule);
+    list->items[list->usedItems++] = createLR1Item(production->name, rule, END);
   }
 
   return list;
@@ -98,8 +103,7 @@ FirstSet *findSet(FirstSets *sets, char *name)
   {
     FirstSet *set = sets->sets[i];
 
-    if(set->name == EMPTY && name == EMPTY) return set;
-    if(set->name != EMPTY && strcmp(set->name, name) == 0) return set;
+    if(strcmp(set->name, name) == 0) return set;
   }
 
   return NULL;
@@ -163,6 +167,10 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
   addTerminal(empty, EMPTY);
   addSet(sets, empty);
 
+  FirstSet *end = createFirstSet(END);
+  addTerminal(end, END);
+  addSet(sets, end);
+
   for(int i = 0; i < config->usedCategories; i++)
   {
     Category *cat = config->categories[i];
@@ -225,15 +233,209 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
   return sets;
 }
 
-LR1ItemList *closure(LR1ItemList *list)
+char *getNextSymbol(LR1Item *item)
+{
+  if(item->dotPosition < item->symbolSize)
+  {
+    return item->symbols[item->dotPosition];
+  }
+
+  return NULL;
+}
+
+Production *getProductionForSymbol(Grammar *grammar, char *symbol)
+{
+  if(symbol == NULL) return NULL;
+
+  for(int i = 0; i < grammar->usedProductions; i++)
+  {
+    Production *production = grammar->productions[i];
+    if(strcmp(production->name, symbol) == 0) return production;
+  }
+
+  return NULL;
+}
+
+int getLookaheadSymbolsSize(LR1Item *item)
+{
+  return (item->symbolSize - item->dotPosition) + 1;
+}
+
+char **getLookaheadSymbols(LR1Item *item, char *lookahead)
+{
+  int remainingSymbols = getLookaheadSymbolsSize(item);
+  char **lookaheadsSymbols = malloc(sizeof(char *) * remainingSymbols);
+
+  int lookaheadPosition = 0;
+  for(int i = item->dotPosition; i < item->symbolSize; i++)
+  {
+    lookaheadsSymbols[lookaheadPosition++] = item->symbols[i];
+  }
+
+  lookaheadsSymbols[lookaheadPosition] = lookahead;
+
+  return lookaheadsSymbols;
+}
+
+FirstSet *getFirstSetForLookaheads(char **lookaheads, int lookaheadSize, FirstSets *sets)
+{
+  FirstSet *resultingSet = createFirstSet("");
+
+  for(int i = 0; i < lookaheadSize; i++)
+  {
+    char *lookahead = lookaheads[i];
+
+    FirstSet *set = findSet(sets, lookahead);
+    combineSets(resultingSet, set);
+
+    if(!setContainsEmpty(set)) break;
+  }
+
+  return resultingSet;
+}
+
+bool areLR1ItemsSame(LR1Item *first, LR1Item *second)
+{
+  if(first->dotPosition != second->dotPosition) return false;
+  if(first->symbolSize != second->symbolSize) return false;
+  if(strcmp(first->lookahead, second->lookahead) != 0) return false;
+
+  for(int i = 0; i < first->symbolSize; i++)
+  {
+    if(strcmp(first->symbols[i], second->symbols[i]) != 0) return false;
+  }
+
+  return true;
+}
+
+bool itemListContainsItem(LR1ItemList *list, LR1Item *searchItem)
+{
+  for(int i = 0; i < list->usedItems; i++)
+  {
+    LR1Item *item = list->items[i];
+
+    if(areLR1ItemsSame(item, searchItem)) return true;
+  }
+
+  return false;
+}
+
+bool addLR1ItemToList(LR1ItemList *list, LR1Item *item)
+{
+  if(itemListContainsItem(list, item)) return false;
+
+  if(list->usedItems == list->itemSize)
+  {
+    list->itemSize = list->itemSize * 2;
+    list->items = realloc(list->items, sizeof(LR1Item *) * list->itemSize);
+  }
+
+  list->items[list->usedItems++] = item;
+
+  return true;
+}
+
+typedef struct LR1ItemWorklist {
+  LR1Item **items;
+  int size;
+  int maxSize;
+} LR1ItemWorklist;
+
+LR1Item *copyLR1Item(LR1Item *item)
+{
+  LR1Item *newItem = malloc(sizeof(LR1Item));
+  newItem->production = strdup(item->production);
+  newItem->dotPosition = item->dotPosition;
+  newItem->symbolSize = item->symbolSize;
+  newItem->symbols = malloc(sizeof(char *) * item->symbolSize);
+  newItem->lookahead = strdup(item->lookahead);
+
+  for(int i = 0; i < item->symbolSize; i++)
+  {
+    newItem->symbols[i] = strdup(item->symbols[i]);
+  }
+
+  return newItem;
+}
+
+LR1ItemList *copyLR1ItemList(LR1ItemList *list)
 {
   LR1ItemList *newList = malloc(sizeof(LR1ItemList));
-  bool changing = false;
+  newList->usedItems = list->usedItems;
+  newList->itemSize = list->itemSize;
+  newList->items = malloc(sizeof(LR1Item *) * list->itemSize);
 
-  do
+  for(int i = 0; i < newList->itemSize; i++)
   {
+    newList->items[i] = copyLR1Item(list->items[i]);
+  }
 
-  } while(changing);
+  return newList;
+}
+
+LR1ItemWorklist *createWorklist()
+{
+  LR1ItemWorklist *worklist = malloc(sizeof(LR1ItemWorklist));
+  worklist->size = 0;
+  worklist->maxSize = 10;
+  worklist->items = malloc(sizeof(LR1Item *) * worklist->maxSize);
+  return worklist;
+}
+
+void addToWorklist(LR1ItemWorklist *worklist, LR1Item *item)
+{
+  if(worklist->maxSize == worklist->size)
+  {
+    worklist->maxSize = worklist->maxSize * 2;
+    worklist->items = realloc(worklist->items, sizeof(LR1Item *) * worklist->maxSize);
+  }
+
+  worklist->items[worklist->size++] = item;
+}
+
+LR1Item *removeFromWorklist(LR1ItemWorklist *worklist)
+{
+  return worklist->items[--worklist->size];;
+}
+
+LR1ItemList *closure(LR1ItemList *list, Grammar *grammar, FirstSets *sets)
+{
+  LR1ItemList *newList = copyLR1ItemList(list);
+
+  LR1ItemWorklist *worklist = createWorklist();
+
+  for(int i = 0; i < newList->usedItems; i++)
+  {
+    addToWorklist(worklist, newList->items[i]);
+  }
+
+  while(worklist->size > 0)
+  {
+    LR1Item *item = removeFromWorklist(worklist);
+
+    Production *production = getProductionForSymbol(grammar, getNextSymbol(item));
+
+    if(production == NULL) continue;
+
+    char **lookaheads = getLookaheadSymbols(item, item->lookahead);
+
+    FirstSet *set = getFirstSetForLookaheads(lookaheads, getLookaheadSymbolsSize(item), sets);
+
+    for(int j = 0; j < production->usedRules; j++)
+    {
+      Rule *rule = production->rules[j];
+
+      for(int k = 0; k < set->usedTerminals; k++)
+      {
+        LR1Item *ruleItem = createLR1Item(production->name, rule, set->terminals[k]);
+
+        if(addLR1ItemToList(newList, ruleItem))
+        {
+          addToWorklist(worklist, ruleItem);
+        }
+      }
+    }
+  }
 
   return newList;
 }
@@ -243,21 +445,22 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
   Production *goalProduction = grammar->productions[0];
 
   FirstSets *sets = createFirstSets(grammar, config);
+  LR1ItemList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
 
-  for(int i = 0; i < sets->usedSets; i++)
+  for(int i = 0; i < cc0->usedItems; i++)
   {
-    FirstSet *set = sets->sets[i];
-    printf("%s: ", set->name);
+    LR1Item *item = cc0->items[i];
 
-    for(int j = 0; j < set->usedTerminals; j++)
+    printf("[%s -> ", item->production);
+
+    for(int j = 0; j < item->symbolSize; j++)
     {
-      printf("%s, ", set->terminals[j]);
+      if(j == item->dotPosition) printf(".");
+      printf("%s ", item->symbols[j]);
     }
 
-    printf("\n");
+    printf(", %s]\n", item->lookahead);
   }
-
-  LR1ItemList *cc0 = closure(createLR1Items(goalProduction));
 
   return NULL;
 }

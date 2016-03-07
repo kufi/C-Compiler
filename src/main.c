@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 
   addProduction(grammar, "Goal", "List", END);
   addProduction(grammar, "List", "List Pair", "Pair", END);
-  addProduction(grammar, "Pair", "( Pair )", EMPTY, END);
+  addProduction(grammar, "Pair", "( Pair )", "( )", END);
   /*addProduction(grammar, "Expr", "Term Expr2", END);
   addProduction(grammar, "Expr2", "+ Term Expr2", "- Term Expr2", EMPTY, END);
   addProduction(grammar, "Term", "Factor Term2", END);
