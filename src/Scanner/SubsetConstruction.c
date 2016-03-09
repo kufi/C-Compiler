@@ -35,9 +35,9 @@ typedef struct TransitionList {
 
 Configuration *createConfiguration(int id, int size)
 {
-  Configuration *configuration = malloc(sizeof(Configuration));
+  Configuration *configuration = calloc(1, sizeof(Configuration));
   configuration->size = size;
-  configuration->states = malloc(sizeof(NFAState *) * size);
+  configuration->states = calloc(size, sizeof(NFAState *));
 
   return configuration;
 }
@@ -80,7 +80,7 @@ Configuration *tryGetExistingConfiguration(ConfigurationList *list, Configuratio
 
 ConfigurationWorklistItem *createWorklistItem(Configuration *configuration, ConfigurationWorklistItem *next)
 {
-  ConfigurationWorklistItem *worklistItem = malloc(sizeof(ConfigurationWorklistItem *));
+  ConfigurationWorklistItem *worklistItem = malloc(sizeof(ConfigurationWorklistItem));
   worklistItem->configuration = configuration;
   worklistItem->next = next;
 
@@ -98,8 +98,8 @@ Configuration *eClosure(Configuration *configuration)
     NFAState *state = configuration->states[i];
     outputStates[used++] = state;
 
-    Configuration *subConfiguration = malloc(sizeof(Configuration));
-    subConfiguration->states = malloc(sizeof(NFAState *) * 2);
+    Configuration *subConfiguration = calloc(1, sizeof(Configuration));
+    subConfiguration->states = calloc(2, sizeof(NFAState *));
     subConfiguration->size = 0;
 
     if(state->outChar1 == '\0' && state->out1 != NULL)
@@ -126,7 +126,7 @@ Configuration *eClosure(Configuration *configuration)
     }
   }
 
-  Configuration *result = malloc(sizeof(Configuration));
+  Configuration *result = calloc(1, sizeof(Configuration));
   result->size = used;
   result->states = malloc(sizeof(NFAState *) * used);
   result->states = outputStates;
@@ -136,7 +136,7 @@ Configuration *eClosure(Configuration *configuration)
 
 Configuration *delta(Configuration *configuration, char c)
 {
-  Configuration *result = malloc(sizeof(Configuration));
+  Configuration *result = calloc(1, sizeof(Configuration));
   result->size = 0;
   result->states = malloc(sizeof(NFAState *) * configuration->size * 2);
 
@@ -177,7 +177,7 @@ int getMinimalCategoryId(Configuration *config)
 
 Transition *createTransition(Configuration *from, Configuration *to, char c)
 {
-  Transition *transition = malloc(sizeof(Transition));
+  Transition *transition = calloc(1, sizeof(Transition));
   transition->from = from;
   transition->to = to;
   transition->character = c;

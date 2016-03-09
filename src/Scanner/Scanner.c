@@ -20,6 +20,7 @@ ScannerConfig *createScannerConfig(int initialSize)
     config->categoriesSize = initialSize;
     config->categories = malloc(sizeof(Category *) * config->categoriesSize);
     config->nfaStateId = 0;
+    config->nfa = NULL;
 
     return config;
 }

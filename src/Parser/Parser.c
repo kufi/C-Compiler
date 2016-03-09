@@ -32,6 +32,12 @@ typedef struct FirstSets {
   FirstSet **sets;
 } FirstSets;
 
+typedef struct LR1ItemWorklist {
+  LR1Item **items;
+  int size;
+  int maxSize;
+} LR1ItemWorklist;
+
 LR1Item *createLR1Item(char *name, Rule *rule, char *lookahead)
 {
   LR1Item *item = malloc(sizeof(LR1Item));
@@ -78,10 +84,10 @@ void addSet(FirstSets *sets, FirstSet *set)
 
 FirstSet *createFirstSet(char *name)
 {
-  FirstSet *set = malloc(sizeof(FirstSet));
+  FirstSet *set = calloc(1, sizeof(FirstSet));
   set->usedTerminals = 0;
   set->terminalSize = 5;
-  set->terminals = malloc(sizeof(char *) * set->terminalSize);
+  set->terminals = calloc(set->terminalSize, sizeof(char *));
   set->name = name;
   return set;
 }
@@ -111,9 +117,9 @@ FirstSet *findSet(FirstSets *sets, char *name)
 
 FirstSet *copySet(FirstSet *set)
 {
-  FirstSet *copy = malloc(sizeof(FirstSet));
+  FirstSet *copy = calloc(1, sizeof(FirstSet));
   *copy = *set;
-  copy->terminals = malloc(sizeof(char *) * set->terminalSize);
+  copy->terminals = calloc(set->terminalSize, sizeof(char *));
   memcpy(copy->terminals, set->terminals, sizeof(char *) * set->terminalSize);
 
   return copy;
@@ -121,12 +127,13 @@ FirstSet *copySet(FirstSet *set)
 
 bool setContainsEmpty(FirstSet *set)
 {
+  if(set->usedTerminals == 0) return false;
   return set->terminals[set->usedTerminals - 1] == EMPTY;
 }
 
 void removeEmptyFromSet(FirstSet *set)
 {
-  if(set->terminals[set->usedTerminals - 1] == EMPTY)
+  if(setContainsEmpty(set))
   {
     --set->usedTerminals;
   }
@@ -335,12 +342,6 @@ bool addLR1ItemToList(LR1ItemList *list, LR1Item *item)
   return true;
 }
 
-typedef struct LR1ItemWorklist {
-  LR1Item **items;
-  int size;
-  int maxSize;
-} LR1ItemWorklist;
-
 LR1Item *copyLR1Item(LR1Item *item)
 {
   LR1Item *newItem = malloc(sizeof(LR1Item));
@@ -365,7 +366,7 @@ LR1ItemList *copyLR1ItemList(LR1ItemList *list)
   newList->itemSize = list->itemSize;
   newList->items = malloc(sizeof(LR1Item *) * list->itemSize);
 
-  for(int i = 0; i < newList->itemSize; i++)
+  for(int i = 0; i < list->usedItems; i++)
   {
     newList->items[i] = copyLR1Item(list->items[i]);
   }
@@ -401,25 +402,18 @@ LR1Item *removeFromWorklist(LR1ItemWorklist *worklist)
 LR1ItemList *closure(LR1ItemList *list, Grammar *grammar, FirstSets *sets)
 {
   LR1ItemList *newList = copyLR1ItemList(list);
-
   LR1ItemWorklist *worklist = createWorklist();
 
-  for(int i = 0; i < newList->usedItems; i++)
-  {
-    addToWorklist(worklist, newList->items[i]);
-  }
+  for(int i = 0; i < newList->usedItems; i++) addToWorklist(worklist, newList->items[i]);
 
   while(worklist->size > 0)
   {
     LR1Item *item = removeFromWorklist(worklist);
-
     Production *production = getProductionForSymbol(grammar, getNextSymbol(item));
 
     if(production == NULL) continue;
 
-    char **lookaheads = getLookaheadSymbols(item, item->lookahead);
-
-    FirstSet *set = getFirstSetForLookaheads(lookaheads, getLookaheadSymbolsSize(item), sets);
+    FirstSet *set = getFirstSetForLookaheads(getLookaheadSymbols(item, item->lookahead), getLookaheadSymbolsSize(item), sets);
 
     for(int j = 0; j < production->usedRules; j++)
     {
@@ -428,16 +422,169 @@ LR1ItemList *closure(LR1ItemList *list, Grammar *grammar, FirstSets *sets)
       for(int k = 0; k < set->usedTerminals; k++)
       {
         LR1Item *ruleItem = createLR1Item(production->name, rule, set->terminals[k]);
-
-        if(addLR1ItemToList(newList, ruleItem))
-        {
-          addToWorklist(worklist, ruleItem);
-        }
+        if(addLR1ItemToList(newList, ruleItem)) addToWorklist(worklist, ruleItem);
       }
     }
   }
 
   return newList;
+}
+
+char *getDotSymbol(LR1Item *item)
+{
+  if(item->dotPosition == item->symbolSize) return NULL;
+
+  return item->symbols[item->dotPosition];
+}
+
+LR1ItemList *goTo(LR1ItemList *list, char *symbol, Grammar *grammar, FirstSets *firstSets)
+{
+  LR1ItemList *moved = malloc(sizeof(LR1ItemList));
+  moved->usedItems = 0;
+  moved->itemSize = 10;
+  moved->items = malloc(sizeof(LR1Item *) * moved->itemSize);
+
+  for(int i = 0; i < list->usedItems; i++)
+  {
+    LR1Item *item = list->items[i];
+
+    char *nextSymbol = getDotSymbol(item);
+
+    if(nextSymbol != NULL && strcmp(nextSymbol, symbol) == 0)
+    {
+      LR1Item *movedDotItem = copyLR1Item(item);
+      movedDotItem->dotPosition++;
+      addLR1ItemToList(moved, movedDotItem);
+    }
+  }
+
+  return closure(moved, grammar, firstSets);
+}
+
+void printLR1ItemList(LR1ItemList *list)
+{
+  for(int i = 0; i < list->usedItems; i++)
+  {
+    LR1Item *item = list->items[i];
+
+    printf("[%s -> ", item->production);
+
+    for(int j = 0; j < item->symbolSize; j++)
+    {
+      if(j == item->dotPosition) printf("\u2022");
+      printf("%s ", item->symbols[j]);
+    }
+
+    if(item->dotPosition == item->symbolSize) printf("\u2022");
+
+    printf(", %s]\n", item->lookahead);
+  }
+}
+
+typedef struct CanonicalCollection {
+  int usedLists;
+  int listSize;
+  LR1ItemList **itemLists;
+} CanonicalCollection;
+
+typedef struct LR1ItemListWorklist {
+  LR1ItemList **itemLists;
+  int size;
+  int maxSize;
+} LR1ItemListWorklist;
+
+typedef struct Transition {
+  LR1ItemList *from;
+  LR1ItemList *to;
+  char *symbol;
+} Transition;
+
+typedef struct Transitions {
+  int usedTransitions;
+  int transitionSize;
+  Transition **transitions;
+} Transitions;
+
+void addToItemListWorklist(LR1ItemListWorklist *worklist, LR1ItemList *itemList)
+{
+  if(worklist->maxSize == worklist->size)
+  {
+    worklist->maxSize = worklist->maxSize * 2;
+    worklist->itemLists = realloc(worklist->itemLists, sizeof(LR1ItemList *) * worklist->maxSize);
+  }
+
+  worklist->itemLists[worklist->size++] = itemList;
+}
+
+typedef struct FollowingSymbols {
+  int usedSymbols;
+  int symbolSize;
+  char **symbols;
+} FollowingSymbols;
+
+LR1ItemList *removeFromItemListWorklist(LR1ItemListWorklist *worklist)
+{
+  return worklist->itemLists[--worklist->size];
+}
+
+bool containsSymbol(FollowingSymbols *symbols, char *symbol)
+{
+  for(int i = 0; i < symbols->usedSymbols; i++)
+  {
+    if(strcmp(symbols->symbols[i], symbol) == 0) return true;
+  }
+
+  return false;
+}
+
+FollowingSymbols *getSymbolsFollowingDot(LR1ItemList *list)
+{
+  FollowingSymbols *following = malloc(sizeof(FollowingSymbols));
+  following->usedSymbols = 0;
+  following->symbolSize = 10;
+  following->symbols = malloc(sizeof(char *) * following->symbolSize);
+
+  for(int i = 0; i < list->usedItems; i++)
+  {
+    LR1Item *item = list->items[i];
+
+    char *symbol = getDotSymbol(item);
+
+    if(symbol != NULL && !containsSymbol(following, symbol))
+    {
+      if(following->usedSymbols == following->symbolSize)
+      {
+        following->symbolSize = following->symbolSize * 2;
+        following->symbols = realloc(following->symbols, sizeof(char *) * following->symbolSize);
+      }
+
+      following->symbols[following->usedSymbols++] = symbol;
+    }
+  }
+
+  return following;
+}
+
+bool areLR1ItemListSame(LR1ItemList *first, LR1ItemList *second)
+{
+  if(first->usedItems != second->usedItems) return false;
+  for(int i = 0; i < first->usedItems; i++)
+  {
+    if(!itemListContainsItem(second, first->items[i])) return false;
+  }
+
+  return true;
+}
+
+LR1ItemList *tryGetExistingItemList(CanonicalCollection *collection, LR1ItemList *search)
+{
+  for(int i = 0; i < collection->usedLists; i++)
+  {
+    LR1ItemList *list = collection->itemLists[i];
+    if(areLR1ItemListSame(list, search)) return list;
+  }
+
+  return NULL;
 }
 
 Parser *createParser(Grammar *grammar, ScannerConfig *config)
@@ -447,19 +594,89 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
   FirstSets *sets = createFirstSets(grammar, config);
   LR1ItemList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
 
-  for(int i = 0; i < cc0->usedItems; i++)
+  CanonicalCollection *cc = malloc(sizeof(CanonicalCollection));
+  cc->usedLists = 0;
+  cc->listSize = 10;
+  cc->itemLists = malloc(sizeof(LR1ItemList *) * cc->listSize);
+  cc->itemLists[cc->usedLists++] = cc0;
+
+  LR1ItemListWorklist *worklist = malloc(sizeof(LR1ItemListWorklist));
+  worklist->size = 0;
+  worklist->maxSize = 10;
+  worklist->itemLists = malloc(sizeof(LR1ItemList *) * worklist->maxSize);
+  addToItemListWorklist(worklist, cc0);
+
+  Transitions *transitions = malloc(sizeof(Transitions));
+  transitions->usedTransitions = 0;
+  transitions->transitionSize = 10;
+  transitions->transitions = malloc(sizeof(Transition *) * transitions->transitionSize);
+
+  while(worklist->size > 0)
   {
-    LR1Item *item = cc0->items[i];
+    LR1ItemList *itemList = removeFromItemListWorklist(worklist);
 
-    printf("[%s -> ", item->production);
-
-    for(int j = 0; j < item->symbolSize; j++)
+    FollowingSymbols *following = getSymbolsFollowingDot(itemList);
+    for(int i = 0; i < following->usedSymbols; i++)
     {
-      if(j == item->dotPosition) printf(".");
-      printf("%s ", item->symbols[j]);
+      char *symbol = following->symbols[i];
+      LR1ItemList *temp = goTo(itemList, symbol, grammar, sets);
+
+      LR1ItemList *existing = tryGetExistingItemList(cc, temp);
+
+      if(existing == NULL)
+      {
+        if(cc->usedLists == cc->listSize)
+        {
+          cc->listSize = cc->listSize * 2;
+          cc->itemLists = realloc(cc->itemLists, sizeof(LR1ItemList *) * cc->listSize);
+        }
+
+        cc->itemLists[cc->usedLists++] = temp;
+
+        addToItemListWorklist(worklist, temp);
+
+        existing = temp;
+      }
+
+      Transition *transition = calloc(1, sizeof(Transition));
+      transition->from = itemList;
+      transition->to = existing;
+      transition->symbol = symbol;
+
+      if(transitions->usedTransitions == transitions->transitionSize)
+      {
+        transitions->transitionSize = transitions->transitionSize * 2;
+        transitions->transitions = realloc(transitions->transitions, sizeof(Transition *) * transitions->transitionSize);
+      }
+
+      transitions->transitions[transitions->usedTransitions++] = transition;
+    }
+  }
+
+  for(int i = 0; i < cc->usedLists; i++)
+  {
+    LR1ItemList *list = cc->itemLists[i];
+    printf("----CC%i----\n", i);
+    printLR1ItemList(list);
+  }
+
+  for(int i = 0; i < transitions->usedTransitions; i++)
+  {
+    Transition *transition = transitions->transitions[i];
+
+    int fromCC = -1;
+    int toCC = -1;
+
+    for(int j = 0; j < cc->usedLists; j++)
+    {
+      if(fromCC != -1 && toCC != -1) break;
+      LR1ItemList *list = cc->itemLists[j];
+
+      if(list == transition->from) fromCC = j;
+      if(list == transition->to) toCC = j;
     }
 
-    printf(", %s]\n", item->lookahead);
+    printf("CC%i -> CC%i on %s\n", fromCC, toCC, transition->symbol);
   }
 
   return NULL;
