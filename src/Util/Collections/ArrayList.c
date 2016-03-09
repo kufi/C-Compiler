@@ -5,12 +5,13 @@ ArrayList *createArrayList(int initialSize, size_t itemSize)
   ArrayList *list = malloc(sizeof(ArrayList));
   list->used = 0;
   list->max = initialSize;
+  list->itemSize = itemSize;
   list->items = malloc(itemSize * list->max);
 
   return list;
 }
 
-void addToArrayList(ArrayList *list, void *item)
+void pushToArrayList(ArrayList *list, void *item)
 {
   if(list->used == list->max)
   {
@@ -21,7 +22,12 @@ void addToArrayList(ArrayList *list, void *item)
   list->items[list->used++] = item;
 }
 
-bool arrayListContains(ArrayList *list, void *item)
+bool arrayListEmpty(ArrayList *list)
 {
+  return list->used == 0;
+}
 
+void *popFromArrayList(ArrayList *list)
+{
+  return list->items[--list->used];
 }
