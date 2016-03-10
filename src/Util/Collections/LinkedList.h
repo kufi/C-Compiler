@@ -13,17 +13,25 @@ typedef struct LinkedList {
   LinkedListNode *end;
 } LinkedList;
 
-LinkedList *createLinkedList();
+#define LIST_FOREACH(L, V) LinkedListNode *_node = NULL;\
+    LinkedListNode *V = NULL;\
+    for(V = _node = L->start; _node != NULL; V = _node = _node->next)
 
-void pushList(LinkedList *list, void *item);
+LinkedList *linkedListCreate();
 
-void *popList(LinkedList *list);
+void linkedListPush(LinkedList *list, void *item);
 
-void unshiftList(LinkedList *list, void *item);
+void *linkedListPop(LinkedList *list);
 
-void *shiftList(LinkedList *list);
+void linkedListUnshift(LinkedList *list, void *item);
 
-static inline int countList(LinkedList *list)
+void *linkedListShift(LinkedList *list);
+
+void linkedListFree(LinkedList *list);
+
+void linkedListRemove(LinkedList *list, LinkedListNode *node);
+
+static inline int linkedListCount(LinkedList *list)
 {
   return list->count;
 }

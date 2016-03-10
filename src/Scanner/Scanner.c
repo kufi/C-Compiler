@@ -6,19 +6,12 @@
 #include "SubsetConstruction.h"
 #include "Hopcroft.h"
 #include "StringBuilder.h"
-
-typedef struct DFAStateStack {
-  int size;
-  int pointer;
-  DFAState **states;
-} DFAStateStack;
+#include "../Util/Collections/Stack.h"
 
 ScannerConfig *createScannerConfig(int initialSize)
 {
     ScannerConfig *config = malloc(sizeof(ScannerConfig));
-    config->usedCategories = 0;
-    config->categoriesSize = initialSize;
-    config->categories = malloc(sizeof(Category *) * config->categoriesSize);
+    config->categories = arrayListCreate(initialSize, sizeof(Category *));
     config->nfaStateId = 0;
     config->nfa = NULL;
 
@@ -49,13 +42,7 @@ void addCategory(ScannerConfig *config, char *name, char *regex)
     config->nfa = concatNFA;
   }
 
-  if(config->usedCategories == config->categoriesSize)
-  {
-    config->categoriesSize = config->categoriesSize * 2;
-    config->categories = realloc(config->categories, sizeof(Category *) * config->categoriesSize);
-  }
-
-  config->categories[config->usedCategories++] = category;
+  arrayListPush(config->categories, category);
 }
 
 char *asciiCharset()
@@ -82,33 +69,6 @@ Scanner *createScanner(ScannerConfig *config, char *text)
   return scanner;
 }
 
-DFAStateStack createStack()
-{
-  DFAStateStack stack;
-  stack.pointer = 0;
-  stack.size = 10;
-  stack.states = malloc(sizeof(DFAState *) * stack.size);
-
-  return stack;
-}
-
-void push(DFAStateStack *stack, DFAState *state)
-{
-  if(stack->pointer == stack->size)
-  {
-    stack->size = stack->size * 2;
-    stack->states = realloc(stack->states, sizeof(DFAState *) * stack->size);
-  }
-
-  stack->states[stack->pointer++] = state;
-}
-
-DFAState *pop(DFAStateStack *stack)
-{
-  if(stack->pointer < 0) return NULL;
-  return stack->states[--stack->pointer];
-}
-
 char nextChar(Scanner *scanner)
 {
   return scanner->text[scanner->textPosition++];
@@ -123,14 +83,11 @@ DFAState *getNextState(Scanner *scanner, DFAState *state, char c)
 {
   if(c == '\0') return scanner->internalStates.error;
 
-  for(int i = 0; i < state->usedTransitions; i++)
+  for(int i = 0; i < arrayListCount(state->transitions); i++)
   {
-    DFATransition *trans = state->transitions[i];
+    DFATransition *trans = arrayListGet(state->transitions, i);
 
-    if(strchr(trans->characters, c) != NULL)
-    {
-      return trans->toState;
-    }
+    if(strchr(trans->characters, c) != NULL) return trans->toState;
   }
 
   return scanner->internalStates.error;
@@ -138,9 +95,9 @@ DFAState *getNextState(Scanner *scanner, DFAState *state, char c)
 
 Category *categoryToId(Scanner *scanner, int categoryId)
 {
-  for(int i = 0; i < scanner->config->usedCategories; i++)
+  for(int i = 0; i < scanner->config->categories->used; i++)
   {
-    Category *category = scanner->config->categories[i];
+    Category *category = arrayListGet(scanner->config->categories, i);
     if(category->id == categoryId) return category;
   }
 
@@ -155,24 +112,22 @@ bool hasMoreWords(Scanner *scanner)
 Word nextWord(Scanner *scanner)
 {
   StringBuilder lexeme = createStringBuilder();
-  DFAStateStack stack = createStack();
-  push(&stack, scanner->internalStates.bad);
+  Stack *stack = stackCreate();
+  stackPush(stack, scanner->internalStates.bad);
 
   DFAState *state = scanner->dfa->start;
-
-  printf("%i %s\n", scanner->textPosition, scanner->text);
 
   while(state != scanner->internalStates.error)
   {
     char c = nextChar(scanner);
     appendChar(&lexeme, c);
-    push(&stack, state);
+    stackPush(stack, state);
     state = getNextState(scanner, state, c);
   }
 
   while(state != scanner->internalStates.bad && state->categoryId == -1)
   {
-    state = pop(&stack);
+    state = stackPop(stack);
     removeLastChar(&lexeme);
     rollbackChar(scanner);
   }

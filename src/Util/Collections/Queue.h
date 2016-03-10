@@ -3,14 +3,12 @@
 
 #include "LinkedList.h"
 
-typedef struct Queue {
-  LinkedList *list;
-} Queue;
+typedef LinkedList Queue;
 
-Queue *createQueue();
+Queue *queueCreate();
 
-void pushQueue(Queue *queue, void *item);
+void queueEnqueue(Queue *queue, void *item);
 
-void *popQueue(Queue *queue);
+void *queueDequeue(Queue *queue);
 
 #endif

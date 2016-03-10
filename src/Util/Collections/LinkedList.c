@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include "LinkedList.h"
 
-LinkedList *createLinkedList()
+LinkedList *linkedListCreate()
 {
   return calloc(1, sizeof(LinkedList));
 }
@@ -13,7 +13,7 @@ LinkedListNode *createNode(void *item)
   return node;
 }
 
-void pushList(LinkedList *list, void *item)
+void linkedListPush(LinkedList *list, void *item)
 {
   LinkedListNode *node = createNode(item);
 
@@ -32,7 +32,7 @@ void pushList(LinkedList *list, void *item)
   list->count++;
 }
 
-void *popList(LinkedList *list)
+void *linkedListPop(LinkedList *list)
 {
   if(list->end == NULL) return NULL;
 
@@ -57,7 +57,7 @@ void *popList(LinkedList *list)
   return item;
 }
 
-void unshiftList(LinkedList *list, void *item)
+void linkedListUnshift(LinkedList *list, void *item)
 {
   LinkedListNode *node = createNode(item);
 
@@ -76,7 +76,7 @@ void unshiftList(LinkedList *list, void *item)
   list->count++;
 }
 
-void *shiftList(LinkedList *list)
+void *linkedListShift(LinkedList *list)
 {
   if(list->start == NULL) return NULL;
 
@@ -98,4 +98,32 @@ void *shiftList(LinkedList *list)
   free(firstItem);
 
   return item;
+}
+
+void linkedListRemove(LinkedList *list, LinkedListNode *node)
+{
+  if(node->prev == NULL)
+  {
+    linkedListShift(list);
+  }
+  else if(node->next == NULL)
+  {
+    linkedListPop(list);
+  }
+  else
+  {
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+    free(node);
+  }
+}
+
+void linkedListFree(LinkedList *list)
+{
+  LIST_FOREACH(list, node)
+  {
+    free(node);
+  }
+
+  free(list);
 }

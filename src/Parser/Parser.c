@@ -186,9 +186,9 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
   addTerminal(end, END);
   addSet(sets, end);
 
-  for(int i = 0; i < config->usedCategories; i++)
+  for(int i = 0; i < config->categories->used; i++)
   {
-    Category *cat = config->categories[i];
+    Category *cat = arrayListGet(config->categories, i);
     FirstSet *set = createFirstSet(cat->name);
     addTerminal(set, cat->name);
     addSet(sets, set);
@@ -501,7 +501,7 @@ bool containsSymbol(ArrayList *symbols, char *symbol)
 
 ArrayList *getSymbolsFollowingDot(LR1ItemList *list)
 {
-  ArrayList *following = createArrayList(10, sizeof(char *));
+  ArrayList *following = arrayListCreate(10, sizeof(char *));
 
   for(int i = 0; i < list->usedItems; i++)
   {
@@ -511,7 +511,7 @@ ArrayList *getSymbolsFollowingDot(LR1ItemList *list)
 
     if(symbol != NULL && !containsSymbol(following, symbol))
     {
-      pushToArrayList(following, symbol);
+      arrayListPush(following, symbol);
     }
   }
 
@@ -547,16 +547,16 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
   FirstSets *sets = createFirstSets(grammar, config);
   LR1ItemList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
 
-  ArrayList *cc = createArrayList(10, sizeof(LR1ItemList *));
-  pushToArrayList(cc, cc0);
+  ArrayList *cc = arrayListCreate(10, sizeof(LR1ItemList *));
+  arrayListPush(cc, cc0);
 
-  Queue *worklist = createQueue();
-  pushQueue(worklist, cc0);
+  Queue *worklist = queueCreate();
+  queueEnqueue(worklist, cc0);
 
-  ArrayList *transitions = createArrayList(10, sizeof(Transition *));
+  ArrayList *transitions = arrayListCreate(10, sizeof(Transition *));
 
   LR1ItemList *itemList = NULL;
-  while((itemList = popQueue(worklist)) != NULL)
+  while((itemList = queueDequeue(worklist)) != NULL)
   {
     ArrayList *following = getSymbolsFollowingDot(itemList);
     for(int i = 0; i < following->used; i++)
@@ -568,8 +568,8 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
 
       if(existing == NULL)
       {
-        pushToArrayList(cc, temp);
-        pushQueue(worklist, temp);
+        arrayListPush(cc, temp);
+        queueEnqueue(worklist, temp);
         existing = temp;
       }
 
@@ -578,7 +578,7 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
       transition->to = existing;
       transition->symbol = symbol;
 
-      pushToArrayList(transitions, transition);
+      arrayListPush(transitions, transition);
     }
   }
 

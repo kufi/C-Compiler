@@ -3,11 +3,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include "../Util/Collections/ArrayList.h"
 
 typedef struct Configuration {
   int id;
-  int size;
-  NFAState **states;
+  ArrayList *states;
 } Configuration;
 
 typedef struct ConfigurationWorklistItem {
@@ -21,12 +21,6 @@ typedef struct Transition {
   char character;
 } Transition;
 
-typedef struct ConfigurationList {
-  int usedConfigurations;
-  int configurationSize;
-  Configuration **configurations;
-} ConfigurationList;
-
 typedef struct TransitionList {
   int usedTransitions;
   int transitionSize;
@@ -36,26 +30,25 @@ typedef struct TransitionList {
 Configuration *createConfiguration(int id, int size)
 {
   Configuration *configuration = calloc(1, sizeof(Configuration));
-  configuration->size = size;
-  configuration->states = calloc(size, sizeof(NFAState *));
+  configuration->states = arrayListCreate(size, sizeof(NFAState *));
 
   return configuration;
 }
 
 bool configurationEquals(Configuration *first, Configuration *second)
 {
-  if(first->size != second->size) return false;
+  if(arrayListCount(first->states) != arrayListCount(second->states)) return false;
 
-  for(int i = 0; i < first->size; i++)
+  for(int i = 0; i < arrayListCount(first->states); i++)
   {
     bool idPresent = false;
-    int stateIdFromFirst = first->states[i]->id;
+    NFAState *firstState = arrayListGet(first->states, i);
 
-    for(int j = 0; j < second->size; j++)
+    for(int j = 0; j < arrayListCount(second->states); j++)
     {
-      int stateIdFromSecond = second->states[j]->id;
+      NFAState *secondState = arrayListGet(second->states, j);
 
-      if(stateIdFromFirst == stateIdFromSecond)
+      if(firstState->id == secondState->id)
       {
         idPresent = true;
         break;
@@ -68,11 +61,12 @@ bool configurationEquals(Configuration *first, Configuration *second)
   return true;
 }
 
-Configuration *tryGetExistingConfiguration(ConfigurationList *list, Configuration *check)
+Configuration *tryGetExistingConfiguration(ArrayList *list, Configuration *check)
 {
-  for(int i = 0; i < list->usedConfigurations; i++)
+  for(int i = 0; i < arrayListCount(list); i++)
   {
-    if(configurationEquals(list->configurations[i], check)) return list->configurations[i];
+    Configuration *config = arrayListGet(list, i);
+    if(configurationEquals(config, check)) return config;
   }
 
   return NULL;
@@ -93,43 +87,42 @@ Configuration *eClosure(Configuration *configuration)
   int outputSize = 10;
   NFAState **outputStates = malloc(sizeof(NFAState *) * outputSize);
 
-  for(int i = 0; i < configuration->size; i++)
+  for(int i = 0; i < arrayListCount(configuration->states); i++)
   {
-    NFAState *state = configuration->states[i];
+    NFAState *state = arrayListGet(configuration->states, i);
     outputStates[used++] = state;
 
     Configuration *subConfiguration = calloc(1, sizeof(Configuration));
-    subConfiguration->states = calloc(2, sizeof(NFAState *));
-    subConfiguration->size = 0;
+    subConfiguration->states = arrayListCreate(2, sizeof(NFAState *));
 
     if(state->outChar1 == '\0' && state->out1 != NULL)
     {
-      subConfiguration->states[subConfiguration->size++] = state->out1;
+      arrayListPush(subConfiguration->states, state->out1);
     }
 
     if(state->outChar2 == '\0' && state->out2 != NULL)
     {
-      subConfiguration->states[subConfiguration->size++] = state->out2;
+      arrayListPush(subConfiguration->states, state->out2);
     }
 
     Configuration *subConfigurationClosure = eClosure(subConfiguration);
 
-    if(used + subConfigurationClosure->size >= outputSize)
+    if(used + arrayListCount(subConfigurationClosure->states) >= outputSize)
     {
-        outputSize = (used + subConfigurationClosure->size) * 2;
+        outputSize = (used + arrayListCount(subConfigurationClosure->states)) * 2;
         outputStates = realloc(outputStates, sizeof(NFAState *) * outputSize);
     }
 
-    for(int j = 0; j < subConfigurationClosure->size; j++)
+    for(int j = 0; j < arrayListCount(subConfigurationClosure->states); j++)
     {
-      outputStates[used++] = subConfigurationClosure->states[j];
+      outputStates[used++] = arrayListGet(subConfigurationClosure->states, j);
     }
   }
 
   Configuration *result = calloc(1, sizeof(Configuration));
-  result->size = used;
-  result->states = malloc(sizeof(NFAState *) * used);
-  result->states = outputStates;
+  result->states = arrayListCreate(used, sizeof(NFAState *));
+  result->states->used = used;
+  result->states->items = (void **)outputStates;
 
   return result;
 }
@@ -137,21 +130,20 @@ Configuration *eClosure(Configuration *configuration)
 Configuration *delta(Configuration *configuration, char c)
 {
   Configuration *result = calloc(1, sizeof(Configuration));
-  result->size = 0;
-  result->states = malloc(sizeof(NFAState *) * configuration->size * 2);
+  result->states = arrayListCreate(arrayListCount(configuration->states) * 2, sizeof(NFAState *));
 
-  for(int i = 0; i < configuration->size; i++)
+  for(int i = 0; i < arrayListCount(configuration->states); i++)
   {
-    NFAState *checkState = configuration->states[i];
+    NFAState *checkState = arrayListGet(configuration->states, i);
 
     if(checkState->outChar1 == c)
     {
-      result->states[result->size++] = checkState->out1;
+      arrayListPush(result->states, checkState->out1);
     }
 
     if(checkState->outChar2 == c)
     {
-      result->states[result->size++] = checkState->out2;
+      arrayListPush(result->states, checkState->out2);
     }
   }
 
@@ -162,9 +154,9 @@ int getMinimalCategoryId(Configuration *config)
 {
   int minimalCategoryId = -1;
 
-  for(int i = 0; i < config->size; i++)
+  for(int i = 0; i < arrayListCount(config->states); i++)
   {
-    NFAState *nfaState = config->states[i];
+    NFAState *nfaState = arrayListGet(config->states, i);
 
     if(nfaState->accepting && (nfaState->id < minimalCategoryId || minimalCategoryId == -1))
     {
@@ -205,35 +197,14 @@ void addTransition(TransitionList *list, Transition *transition)
   list->transitions[list->usedTransitions++] = transition;
 }
 
-ConfigurationList *createConfigurationList()
+void createStatesFromConfigurations(DFA *dfa, ArrayList *configurations)
 {
-  ConfigurationList *list = malloc(sizeof(ConfigurationList));
-  list->usedConfigurations = 0;
-  list->configurationSize = 10;
-  list->configurations = malloc(sizeof(Configuration *) * list->configurationSize);
-  return list;
-}
+  dfa->states = arrayListCreate(arrayListCount(configurations), sizeof(DFAState *));
 
-void addConfiguration(ConfigurationList *list, Configuration *configuration)
-{
-  if(list->usedConfigurations == list->configurationSize)
+  for(int i = 0; i < arrayListCount(configurations); i++)
   {
-    list->configurationSize = list->configurationSize * 2;
-    list->configurations = realloc(list->configurations, sizeof(Configuration *) * list->configurationSize);
-  }
-
-  list->configurations[list->usedConfigurations++] = configuration;
-}
-
-void createStatesFromConfigurations(DFA *dfa, ConfigurationList *configurations)
-{
-  dfa->stateSize = configurations->usedConfigurations;
-  dfa->states = malloc(sizeof(DFAState *) * configurations->usedConfigurations);
-
-  for(int i = 0; i < configurations->usedConfigurations; i++)
-  {
-    Configuration *config = configurations->configurations[i];
-    dfa->states[config->id] = createDFAState(config->id, getMinimalCategoryId(config));
+    Configuration *config = arrayListGet(configurations, i);
+    arrayListPush(dfa->states, createDFAState(config->id, getMinimalCategoryId(config)));
   }
 }
 
@@ -242,32 +213,26 @@ void createDFATransitions(DFA *dfa, TransitionList *transitions)
   for(int i = 0; i < transitions->usedTransitions; i++)
   {
     Transition *trans = transitions->transitions[i];
-    DFAState *from = dfa->states[trans->from->id];
-    DFAState *to = dfa->states[trans->to->id];
+    DFAState *from = arrayListGet(dfa->states, trans->from->id);
+    DFAState *to = arrayListGet(dfa->states, trans->to->id);
 
     DFATransition *dfaTrans = malloc(sizeof(DFATransition));
     dfaTrans->characters = strdup(&trans->character);
     dfaTrans->toState = to;
 
-    if(from->usedTransitions == from->transitionSize)
-    {
-      from->transitionSize = from->transitionSize * 2;
-      from->transitions = realloc(from->transitions, sizeof(DFATransition *) * from->transitionSize);
-    }
-
-    from->transitions[from->usedTransitions++] = dfaTrans;
+    arrayListPush(from->transitions, dfaTrans);
   }
 }
 
 DFA *subsetConstruction(NFA *nfa, char *characterSet)
 {
   Configuration *startConfiguration = createConfiguration(0, 1);
-  startConfiguration->states[0] = nfa->start;
+  arrayListPush(startConfiguration->states, nfa->start);
 
   Configuration *q0 = eClosure(startConfiguration);
 
-  ConfigurationList *configurations = createConfigurationList();
-  addConfiguration(configurations, q0);
+  ArrayList *configurations = arrayListCreate(10, sizeof(Configuration *));
+  arrayListPush(configurations, q0);
 
   TransitionList *transitions = createTransitionList();
 
@@ -283,15 +248,14 @@ DFA *subsetConstruction(NFA *nfa, char *characterSet)
       char character = characterSet[i];
       Configuration *charConfiguration = eClosure(delta(check->configuration, character));
 
-      if(charConfiguration->size == 0) continue;
+      if(arrayListCount(charConfiguration->states) == 0) continue;
 
       Configuration *existingCharConfiguration = tryGetExistingConfiguration(configurations, charConfiguration);
 
       if(existingCharConfiguration == NULL)
       {
-        charConfiguration->id = configurations->usedConfigurations;
-
-        addConfiguration(configurations, charConfiguration);
+        charConfiguration->id = arrayListCount(configurations);
+        arrayListPush(configurations, charConfiguration);
 
         ConfigurationWorklistItem *newWorklistItem = createWorklistItem(charConfiguration, NULL);
         lastWorklistItem->next = newWorklistItem;
@@ -311,7 +275,7 @@ DFA *subsetConstruction(NFA *nfa, char *characterSet)
   DFA *dfa = malloc(sizeof(DFA));
   createStatesFromConfigurations(dfa, configurations);
   createDFATransitions(dfa, transitions);
-  dfa->start = dfa->states[0];
+  dfa->start = arrayListGet(dfa->states, 0);
 
   return dfa;
 }

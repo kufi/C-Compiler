@@ -1,12 +1,8 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include "StringBuilder.h"
-
-typedef struct PostfixState {
-  char operatorStack[100];
-  int operatorPosition;
-  StringBuilder output;
-} PostfixState;
+#include "../Util/Collections/Stack.h"
 
 int getOperatorPrecedence(char op)
 {
@@ -21,31 +17,15 @@ int getOperatorPrecedence(char op)
   return -1;
 }
 
-void addToOutput(struct PostfixState *state, char c)
+void addToOutput(StringBuilder *output, char c)
 {
-  appendChar(&state->output, c);
-}
-
-char popOperator(struct PostfixState *state)
-{
-  return state->operatorStack[--state->operatorPosition];
-}
-
-void pushOperator(struct PostfixState *state, char c)
-{
-  state->operatorStack[state->operatorPosition++] = c;
-}
-
-char peekOperator(struct PostfixState *state)
-{
-  return state->operatorStack[state->operatorPosition - 1];
+  appendChar(output, c);
 }
 
 char *infixToPostfix(char *regex)
 {
-  struct PostfixState state;
-  state.output = createStringBuilder();
-  state.operatorPosition = 0;
+  Stack *state = stackCreate();
+  StringBuilder output = createStringBuilder();
 
   for(int i = 0; regex[i] != '\0'; i++)
   {
@@ -60,51 +40,51 @@ char *infixToPostfix(char *regex)
 
     if(escapedChar)
     {
-      addToOutput(&state, '\\');
-      addToOutput(&state, c);
+      addToOutput(&output, '\\');
+      addToOutput(&output, c);
     }
     else if(c == '|' || c == '*')
     {
-      while(state.operatorPosition > 0 && getOperatorPrecedence(peekOperator(&state)) > getOperatorPrecedence(c))
+      while(state->count > 0 && getOperatorPrecedence(*(char *)stackPeek(state)) > getOperatorPrecedence(c))
       {
-        addToOutput(&state, popOperator(&state));
+        addToOutput(&output, *(char *)stackPop(state));
       }
 
-      pushOperator(&state, c);
+      stackPush(state, strdup(&c));
     }
     else if(c == '(')
     {
-      pushOperator(&state, c);
+      stackPush(state, strdup(&c));
     }
     else if(c == ')')
     {
-      while(state.operatorStack[state.operatorPosition - 1] != '(')
+      while(*(char *)stackPeek(state) != '(')
       {
-        addToOutput(&state, popOperator(&state));
+        addToOutput(&output, *(char *)stackPop(state));
       }
 
-      popOperator(&state);
+      stackPop(state);
     }
     else
     {
-      addToOutput(&state, c);
+      addToOutput(&output, c);
     }
 
     char nextC = regex[i + 1];
     if(c != '|' && c != ')' && c != '(' && nextC != '|' && nextC != ')' && nextC != '*' && nextC != '\0')
     {
-      if(c == '*') addToOutput(&state, popOperator(&state));
+      if(c == '*') addToOutput(&output, *(char *)stackPop(state));
 
-      pushOperator(&state, '.');
+      stackPush(state, ".");
     }
     else if(c == ')' && nextC != ')' && nextC != '*' && nextC != '|' && nextC != '\0')
     {
-      pushOperator(&state, '.');
+      stackPush(state, ".");
     }
   }
 
-  while(state.operatorPosition > 0) addToOutput(&state, popOperator(&state));
+  while(state->count > 0) addToOutput(&output, *(char *)stackPop(state));
 
-  addToOutput(&state, '\0');
-  return state.output.string;
+  addToOutput(&output, '\0');
+  return output.string;
 }

@@ -3,12 +3,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include "../Util/Collections/ArrayList.h"
 
 typedef struct Partition {
   int categoryId;
-  int usedStates;
-  int stateSize;
-  DFAState **states;
+  ArrayList *states;
 } Partition;
 
 typedef struct PartitionSplit {
@@ -22,54 +21,35 @@ typedef struct PartitionTransition {
   Partition *partition;
 } PartitionTransition;
 
-typedef struct PartitionTable {
-  int usedPartitions;
-  int partitionSize;
-  Partition **partitions;
-} PartitionTable;
-
 Partition *createPartition(const int categoryId)
 {
   Partition *partition = malloc(sizeof(Partition));
   partition->categoryId = categoryId;
-  partition->usedStates = 0;
-  partition->stateSize = 10;
-  partition->states = malloc(sizeof(DFAState *) * partition->stateSize);
+  partition->states = arrayListCreate(10, sizeof(DFAState *));
 
   return partition;
 }
 
-Partition *tryGetExistingPartition(int categoryId, PartitionTable *partitionTable)
+Partition *tryGetExistingPartition(int categoryId, ArrayList *partitionTable)
 {
-  for(int i = 0; i < partitionTable->usedPartitions; i++)
+  for(int i = 0; i < arrayListCount(partitionTable); i++)
   {
-    Partition *partition = partitionTable->partitions[i];
+    Partition *partition = arrayListGet(partitionTable, i);
     if(partition->categoryId == categoryId) return partition;
   }
 
   return NULL;
 }
 
-void addStateToPartition(Partition *partition, DFAState *state)
+Partition *findPartitionToState(DFAState *state, ArrayList *partitionTable)
 {
-  if(partition->usedStates == partition->stateSize)
+  for(int i = 0; i < arrayListCount(partitionTable); i++)
   {
-    partition->stateSize = partition->stateSize * 2;
-    partition->states = realloc(partition->states, sizeof(DFAState *) * partition->stateSize);
-  }
+    Partition *partition = arrayListGet(partitionTable, i);
 
-  partition->states[partition->usedStates++] = state;
-}
-
-Partition *findPartitionToState(DFAState *state, PartitionTable *partitionTable)
-{
-  for(int i = 0; i < partitionTable->usedPartitions; i++)
-  {
-    Partition *partition = partitionTable->partitions[i];
-
-    for(int j = 0; j < partition->usedStates; j++)
+    for(int j = 0; j < arrayListCount(partition->states); j++)
     {
-      if(partition->states[j] == state) return partition;
+      if(arrayListGet(partition->states, j) == state) return partition;
     }
   }
 
@@ -96,13 +76,13 @@ PartitionSplit *createPartitionSplit(int categoryId)
   return split;
 }
 
-PartitionTransition **partitionTransitionsForState(DFAState *state, PartitionTable *partitionTable)
+PartitionTransition **partitionTransitionsForState(DFAState *state, ArrayList *partitionTable)
 {
-  PartitionTransition **partitionTransitions = malloc(sizeof(PartitionTransition *) * state->usedTransitions);
+  PartitionTransition **partitionTransitions = calloc(arrayListCount(state->transitions), sizeof(PartitionTransition *));
 
-  for(int i = 0; i < state->usedTransitions; i++)
+  for(int i = 0; i < arrayListCount(state->transitions); i++)
   {
-    DFATransition *trans = state->transitions[i];
+    DFATransition *trans = arrayListGet(state->transitions, i);
 
     partitionTransitions[i] = malloc(sizeof(PartitionTransition));
     partitionTransitions[i]->character = trans->characters[0];
@@ -112,13 +92,13 @@ PartitionTransition **partitionTransitionsForState(DFAState *state, PartitionTab
   return partitionTransitions;
 }
 
-bool transitionsEquivalent(DFAState *state, PartitionTransition **partitionTransitions, PartitionTable *partitionTable)
+bool transitionsEquivalent(DFAState *state, PartitionTransition **partitionTransitions, ArrayList *partitionTable)
 {
-  for(int j = 0; j < state->usedTransitions; j++)
+  for(int j = 0; j < arrayListCount(state->transitions); j++)
   {
-    DFATransition *trans = state->transitions[j];
+    DFATransition *trans = arrayListGet(state->transitions, j);
 
-    PartitionTransition *transition = tryFindPartitionTransition(trans->characters[0], state->usedTransitions, partitionTransitions);
+    PartitionTransition *transition = tryFindPartitionTransition(trans->characters[0], arrayListCount(state->transitions), partitionTransitions);
 
     if(transition == NULL || transition->partition != findPartitionToState(trans->toState, partitionTable)) return false;
   }
@@ -126,33 +106,33 @@ bool transitionsEquivalent(DFAState *state, PartitionTransition **partitionTrans
   return true;
 }
 
-PartitionSplit *split(Partition *partition, PartitionTable *partitionTable)
+PartitionSplit *split(Partition *partition, ArrayList *partitionTable)
 {
   PartitionSplit *split = createPartitionSplit(partition->categoryId);
 
-  DFAState *firstState = partition->states[0];
-  addStateToPartition(split->first, firstState);
+  DFAState *firstState = arrayListGet(partition->states, 0);
+  arrayListPush(split->first->states, firstState);
 
   PartitionTransition **partitionTransitions = partitionTransitionsForState(firstState, partitionTable);
 
-  for(int i = 1; i < partition->usedStates; i++)
+  for(int i = 1; i < arrayListCount(partition->states); i++)
   {
-    DFAState *state = partition->states[i];
+    DFAState *state = arrayListGet(partition->states, i);
 
-    if(state->usedTransitions != firstState->usedTransitions)
+    if(arrayListCount(state->transitions) != arrayListCount(firstState->transitions))
     {
-      addStateToPartition(split->second, state);
+      arrayListPush(split->second->states, state);
       split->split = true;
       continue;
     }
 
     if(transitionsEquivalent(state, partitionTransitions, partitionTable))
     {
-      addStateToPartition(split->first, state);
+      arrayListPush(split->first->states, state);
     }
     else
     {
-      addStateToPartition(split->second, state);
+      arrayListPush(split->second->states, state);
       split->split = true;
     }
   }
@@ -160,11 +140,11 @@ PartitionSplit *split(Partition *partition, PartitionTable *partitionTable)
   return split;
 }
 
-int findPartitionIdToPartition(Partition *partition, PartitionTable *partitionTable)
+int findPartitionIdToPartition(Partition *partition, ArrayList *partitionTable)
 {
-  for(int i = 0; i < partitionTable->usedPartitions; i++)
+  for(int i = 0; i < arrayListCount(partitionTable); i++)
   {
-    if(partitionTable->partitions[i] == partition) return i;
+    if(arrayListGet(partitionTable, i) == partition) return i;
   }
 
   return -1;
@@ -172,59 +152,42 @@ int findPartitionIdToPartition(Partition *partition, PartitionTable *partitionTa
 
 DFATransition *tryFindTransition(DFAState *state, DFAState *toState)
 {
-  for(int i = 0; i < state->usedTransitions; i++)
+  for(int i = 0; i < arrayListCount(state->transitions); i++)
   {
-    DFATransition *trans = state->transitions[i];
+    DFATransition *trans = arrayListGet(state->transitions, i);
     if(trans->toState == toState) return trans;
   }
 
   return NULL;
 }
 
-PartitionTable *createPartitionTable()
+ArrayList *createPartitionTable()
 {
-  PartitionTable *partitionTable = malloc(sizeof(PartitionTable));
-  partitionTable->usedPartitions = 0;
-  partitionTable->partitionSize = 10;
-  partitionTable->partitions = malloc(sizeof(Partition *) * partitionTable->partitionSize);
-
-  return partitionTable;
+  return arrayListCreate(10, sizeof(Partition *));
 }
 
-void addPartitionToTable(PartitionTable *table, Partition *partition)
+ArrayList *initializePartitionTable(DFA *dfa)
 {
-  if(table->usedPartitions == table->partitionSize)
+  ArrayList *partitionTable = createPartitionTable();
+
+  for(int i = 0; i < arrayListCount(dfa->states); i++)
   {
-    table->partitionSize = table->partitionSize * 2;
-    table->partitions = realloc(table->partitions, sizeof(Partition *) * table->partitionSize);
-  }
-
-  table->partitions[table->usedPartitions++] = partition;
-}
-
-PartitionTable *initializePartitionTable(DFA *dfa)
-{
-  PartitionTable *partitionTable = createPartitionTable();
-
-  for(int i = 0; i < dfa->stateSize; i++)
-  {
-    DFAState *state = dfa->states[i];
-
+    DFAState *state = arrayListGet(dfa->states, i);
     Partition *partition = tryGetExistingPartition(state->categoryId, partitionTable);
 
     if(partition == NULL)
     {
       partition = createPartition(state->categoryId);
-      addPartitionToTable(partitionTable, partition);
+      arrayListPush(partitionTable, partition);
     }
 
-    addStateToPartition(partition, state);
+    arrayListPush(partition->states, state);
   }
 
   return partitionTable;
 }
 
-PartitionTable *splitTable(PartitionTable *partitionTable)
+ArrayList *splitTable(ArrayList *partitionTable)
 {
   bool hasNewPartitions;
 
@@ -232,17 +195,17 @@ PartitionTable *splitTable(PartitionTable *partitionTable)
   {
     hasNewPartitions = false;
 
-    PartitionTable *newPartitionTable = createPartitionTable();
+    ArrayList *newPartitionTable = createPartitionTable();
 
-    for(int i = 0; i < partitionTable->usedPartitions; i++)
+    for(int i = 0; i < arrayListCount(partitionTable); i++)
     {
-      PartitionSplit *partitionSplit = split(partitionTable->partitions[i], partitionTable);
+      PartitionSplit *partitionSplit = split(arrayListGet(partitionTable, i), partitionTable);
 
-      addPartitionToTable(newPartitionTable, partitionSplit->first);
+      arrayListPush(newPartitionTable, partitionSplit->first);
 
       if(partitionSplit->split)
       {
-        addPartitionToTable(newPartitionTable, partitionSplit->second);
+        arrayListPush(newPartitionTable, partitionSplit->second);
         hasNewPartitions = true;
       }
     }
@@ -253,26 +216,22 @@ PartitionTable *splitTable(PartitionTable *partitionTable)
   return partitionTable;
 }
 
-DFA *initializeDFA(PartitionTable *partitionTable)
+DFA *initializeDFA(ArrayList *partitionTable)
 {
   DFA *dfa = malloc(sizeof(DFA));
+  dfa->states = arrayListCreate(arrayListCount(partitionTable), sizeof(DFAState *));
 
-  dfa->stateSize = partitionTable->usedPartitions;
-  dfa->states = malloc(sizeof(DFAState *) * partitionTable->usedPartitions);
-
-  for(int i = 0; i < partitionTable->usedPartitions; i++)
+  for(int i = 0; i < arrayListCount(partitionTable); i++)
   {
-    DFAState *state = partitionTable->partitions[i]->states[0];
-    dfa->states[i] = createDFAState(i, state->categoryId);
-    dfa->states[i]->usedTransitions = 0;
-    dfa->states[i]->transitionSize = state->usedTransitions;
-    dfa->states[i]->transitions = malloc(sizeof(DFATransition *) * state->usedTransitions);
+    Partition *partition = arrayListGet(partitionTable, i);
+    DFAState *state = arrayListGet(partition->states, 0);
+    arrayListPush(dfa->states, createDFAState(i, state->categoryId));
   }
 
   return dfa;
 }
 
-int findPartitionIdToState(DFAState *state, PartitionTable *partitionTable)
+int findPartitionIdToState(DFAState *state, ArrayList *partitionTable)
 {
   return findPartitionIdToPartition(findPartitionToState(state, partitionTable), partitionTable);
 }
@@ -293,28 +252,29 @@ void appendCharacter(DFATransition *partitionTransition, char *character)
   partitionTransition->characters = strncat(newCharacters, character, 1);
 }
 
-void createTransitions(DFA *minimizedDfa, PartitionTable *partitionTable)
+void createTransitions(DFA *minimizedDfa, ArrayList *partitionTable)
 {
-  for(int i = 0; i < partitionTable->usedPartitions; i++)
+  for(int i = 0; i < arrayListCount(partitionTable); i++)
   {
-    DFAState *partitionState = minimizedDfa->states[i];
+    DFAState *partitionState = arrayListGet(minimizedDfa->states, i);
 
     //old state, which holds all transitions which have to be generated for the partition state
-    DFAState *state = partitionTable->partitions[i]->states[0];
+    Partition *partition = arrayListGet(partitionTable, i);
+    DFAState *state = arrayListGet(partition->states, 0);
 
-    for(int j = 0; j < state->usedTransitions; j++)
+    for(int j = 0; j < arrayListCount(state->transitions); j++)
     {
-      DFATransition *trans = state->transitions[j];
+      DFATransition *trans = arrayListGet(state->transitions, j);
 
       int partitionId = findPartitionIdToState(trans->toState, partitionTable);
 
-      DFAState *toState = minimizedDfa->states[partitionId];
+      DFAState *toState = arrayListGet(minimizedDfa->states, partitionId);
       DFATransition *partitionTransition = tryFindTransition(partitionState, toState);
 
       if(partitionTransition == NULL)
       {
         partitionTransition = createPartitionTransition(toState);
-        partitionState->transitions[partitionState->usedTransitions++] = partitionTransition;
+        arrayListPush(partitionState->transitions, partitionTransition);
       }
 
       appendCharacter(partitionTransition, trans->characters);
@@ -322,12 +282,12 @@ void createTransitions(DFA *minimizedDfa, PartitionTable *partitionTable)
   }
 }
 
-void setStartState(DFA *dfa, DFAState *startState, PartitionTable *partitionTable)
+void setStartState(DFA *dfa, DFAState *startState, ArrayList *partitionTable)
 {
-  dfa->start = dfa->states[findPartitionIdToState(startState, partitionTable)];
+  dfa->start = arrayListGet(dfa->states, findPartitionIdToState(startState, partitionTable));
 }
 
-DFA *createDFAFromPartitionTable(PartitionTable *partitionTable, DFAState *startState)
+DFA *createDFAFromPartitionTable(ArrayList *partitionTable, DFAState *startState)
 {
   DFA *dfa = initializeDFA(partitionTable);
 
@@ -339,6 +299,6 @@ DFA *createDFAFromPartitionTable(PartitionTable *partitionTable, DFAState *start
 
 DFA *hopcroft(DFA *dfa)
 {
-  PartitionTable *partitionTable = splitTable(initializePartitionTable(dfa));
-  return createDFAFromPartitionTable(partitionTable, dfa->states[0]);
+  ArrayList *partitionTable = splitTable(initializePartitionTable(dfa));
+  return createDFAFromPartitionTable(partitionTable, arrayListGet(dfa->states, 0));
 }

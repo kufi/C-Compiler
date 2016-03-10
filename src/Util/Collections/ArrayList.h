@@ -11,11 +11,11 @@ typedef struct ArrayList {
   void **items;
 } ArrayList;
 
-ArrayList *createArrayList(int initialSize, size_t itemSize);
+ArrayList *arrayListCreate(int initialSize, size_t itemSize);
 
-void pushToArrayList(ArrayList *list, void *item);
+void arrayListPush(ArrayList *list, void *item);
 
-void *popFromArrayList(ArrayList *list);
+void *arrayListPop(ArrayList *list);
 
 bool arrayListEmpty(ArrayList *list);
 
@@ -28,5 +28,12 @@ static inline void arrayListSet(ArrayList *list, int i, void *item)
 {
   list->items[i] = item;
 }
+
+static inline int arrayListCount(ArrayList *list)
+{
+  return list->used;
+}
+
+void arrayListFree(ArrayList *list);
 
 #endif

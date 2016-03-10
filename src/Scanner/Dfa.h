@@ -2,6 +2,7 @@
 #define DFA_HEADER
 
 #include "Nfa.h"
+#include "../Util/Collections/ArrayList.h"
 
 typedef struct DFATransition {
   char *characters;
@@ -11,14 +12,11 @@ typedef struct DFATransition {
 typedef struct DFAState {
   int id;
   int categoryId;
-  int usedTransitions;
-  int transitionSize;
-  DFATransition **transitions;
+  ArrayList *transitions;
 } DFAState;
 
 typedef struct DFA {
-  int stateSize;
-  DFAState **states;
+  ArrayList *states;
   DFAState *start;
 } DFA;
 

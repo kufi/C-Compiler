@@ -7,6 +7,8 @@
 #include "Scanner/Scanner.h"
 #include "Parser/Grammar.h"
 #include "Parser/Parser.h"
+#include "Util/Collections/HashMap.h"
+#include "Util/Collections/HashSet.h"
 
 typedef struct PrinterState {
   int position;
@@ -62,9 +64,9 @@ void printDFAState(DFAState *dfaState, PrinterState *printerState)
     printf("%i [label=\"%i (C: %i)\"]\n", dfaState->id, dfaState->id, dfaState->categoryId);
   }
 
-  for(int i = 0; i < dfaState->usedTransitions; i++)
+  for(int i = 0; i < dfaState->transitions->used; i++)
   {
-    DFATransition *trans = dfaState->transitions[i];
+    DFATransition *trans = arrayListGet(dfaState->transitions, i);
 
     printf("%i -> %i[label=\"%c", dfaState->id, trans->toState->id, trans->characters[0]);
     for(int i = 1; i < strlen(trans->characters); i++)
@@ -80,7 +82,7 @@ void printDFAState(DFAState *dfaState, PrinterState *printerState)
 void printDFA(DFA *dfa)
 {
   PrinterState *state = malloc(sizeof(PrinterState));
-  state->usedIds = malloc(sizeof(int) * dfa->stateSize);
+  state->usedIds = malloc(sizeof(int) * arrayListCount(dfa->states));
   state->position = 0;
 
   printf("digraph {\n");
@@ -135,9 +137,9 @@ int main(int argc, char **argv)
   addCategory(config, "(", "\\(");
   addCategory(config, ")", "\\)");*/
 
-  Scanner *scanner = createScanner(config, "123 + 438 * -44");
+  Scanner *scanner = createScanner(config, "(())()(((())))");
 
-  /*while(hasMoreWords(scanner))
+  while(hasMoreWords(scanner))
   {
     Word word = nextWord(scanner);
 
@@ -148,7 +150,7 @@ int main(int argc, char **argv)
     }
 
     printf("'%s' Category: %s\n", word.lexeme, word.category->name);
-  }*/
+  }
 
   Grammar *grammar = createGrammar();
 

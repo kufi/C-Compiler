@@ -2,20 +2,17 @@
 #include "LinkedList.h"
 #include "Queue.h"
 
-Queue *createQueue()
+Queue *queueCreate()
 {
-  Queue *queue = malloc(sizeof(Queue));
-  queue->list = createLinkedList();
-
-  return queue;
+  return linkedListCreate();
 }
 
-void pushQueue(Queue *queue, void *item)
+void queueEnqueue(Queue *queue, void *item)
 {
-  pushList(queue->list, item);
+  linkedListPush(queue, item);
 }
 
-void *popQueue(Queue *queue)
+void *queueDequeue(Queue *queue)
 {
-  return shiftList(queue->list);
+  return linkedListShift(queue);
 }

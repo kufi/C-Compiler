@@ -1,17 +1,17 @@
 #include "ArrayList.h"
 
-ArrayList *createArrayList(int initialSize, size_t itemSize)
+ArrayList *arrayListCreate(int initialSize, size_t itemSize)
 {
   ArrayList *list = malloc(sizeof(ArrayList));
   list->used = 0;
   list->max = initialSize;
   list->itemSize = itemSize;
-  list->items = malloc(itemSize * list->max);
+  list->items = calloc(initialSize, itemSize);
 
   return list;
 }
 
-void pushToArrayList(ArrayList *list, void *item)
+void arrayListPush(ArrayList *list, void *item)
 {
   if(list->used == list->max)
   {
@@ -27,7 +27,12 @@ bool arrayListEmpty(ArrayList *list)
   return list->used == 0;
 }
 
-void *popFromArrayList(ArrayList *list)
+void *arrayListPop(ArrayList *list)
 {
   return list->items[--list->used];
+}
+
+void arrayListFree(ArrayList *list)
+{
+  free(list);
 }

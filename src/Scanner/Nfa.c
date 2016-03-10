@@ -32,7 +32,7 @@ NFA *createNFA(NFAState *start, NFAState *final)
 NFA *buildNFA(int startId, char *regex)
 {
   char *postfix = infixToPostfix(regex);
-  
+
   struct NFA **nfaStack = malloc(sizeof(postfix)/sizeof(postfix[0]) * sizeof(NFA));
   int nfaPosition = 0;
   int stateId = startId;
