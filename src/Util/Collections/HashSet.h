@@ -25,6 +25,8 @@ void hashSetPut(HashSet *set, void *data);
 
 bool hashSetExists(HashSet *set, void *data);
 
+void *hashSetGetExisting(HashSet *set, void *data);
+
 void hashSetRemove(HashSet *set, void *data);
 
 #endif

@@ -22,7 +22,13 @@ void hashSetPut(HashSet *set, void *data)
 
 bool hashSetExists(HashSet *set, void *data)
 {
-  return hashMapGet(set, data) != NULL;
+  return hashMapGetNode(set, data) != NULL;
+}
+
+void *hashSetGetExisting(HashSet *set, void *data)
+{
+  HashMapNode *node = hashMapGetNode(set, data);
+  return node != NULL ? node->key : NULL;
 }
 
 void hashSetRemove(HashSet *set, void *data)

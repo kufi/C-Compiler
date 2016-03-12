@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include "LinkedList.h"
 #include "ArrayList.h"
 
@@ -46,6 +47,8 @@ HashMap *hashMapCreateFull(int capacity, float loadFactor, HashMapCompare compar
 void hashMapSet(HashMap *map, void *key, void *data);
 
 void *hashMapGet(HashMap *map, void *key);
+
+HashMapNode *hashMapGetNode(HashMap *map, void *key);
 
 void hashMapRemove(HashMap *map, void *key);
 

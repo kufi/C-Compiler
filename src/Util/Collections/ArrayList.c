@@ -32,6 +32,11 @@ void *arrayListPop(ArrayList *list)
   return list->items[--list->used];
 }
 
+void arrayListQSort(ArrayList *list, int (*compare)(const void *, const void *))
+{
+  qsort(list->items, list->used, list->itemSize, compare);
+}
+
 void arrayListFree(ArrayList *list)
 {
   free(list);

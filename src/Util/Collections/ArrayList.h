@@ -36,4 +36,6 @@ static inline int arrayListCount(ArrayList *list)
 
 void arrayListFree(ArrayList *list);
 
+void arrayListQSort(ArrayList *list, int (*compare)(const void *a, const void *b));
+
 #endif

@@ -1,0 +1,4561 @@
+'(' Category: (
+'(' Category: (
+')' Category: )
+')' Category: )
+'(' Category: (
+')' Category: )
+'(' Category: (
+'(' Category: (
+'(' Category: (
+'(' Category: (
+')' Category: )
+')' Category: )
+')' Category: )
+')' Category: )
+Goal
+ | List
+List
+ | List Pair
+ | Pair
+Pair
+ | ( Pair )
+ | ( )
+START WITH itemList
+35760880
+[Goal -> •List , END]
+[List -> •List Pair , END]
+[List -> •Pair , END]
+[Pair -> •( Pair ) , END]
+[Pair -> •( ) , END]
+[List -> •List Pair , (]
+[List -> •Pair , (]
+[Pair -> •( Pair ) , (]
+[Pair -> •( ) , (]
+Node KEy: -1
+EXISTING: 0 List
+35766240
+[Goal -> List •, END]
+[List -> List •Pair , (]
+[List -> List •Pair , END]
+[Pair -> •( ) , (]
+[Pair -> •( Pair ) , (]
+[Pair -> •( ) , END]
+[Pair -> •( Pair ) , END]
+PUT: 1
+PUT2: 2
+Node KEy: -1
+EXISTING: 0 Pair
+35771392
+[List -> Pair •, (]
+[List -> Pair •, END]
+PUT: 2
+PUT2: 3
+Node KEy: -1
+EXISTING: 0 (
+35773824
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+PUT: 3
+PUT2: 4
+START WITH itemList
+35766240
+[Goal -> List •, END]
+[List -> List •Pair , (]
+[List -> List •Pair , END]
+[Pair -> •( ) , (]
+[Pair -> •( Pair ) , (]
+[Pair -> •( ) , END]
+[Pair -> •( Pair ) , END]
+Node KEy: -1
+EXISTING: 0 Pair
+35779264
+[List -> List Pair •, (]
+[List -> List Pair •, END]
+PUT: 4
+PUT2: 5
+Node KEy: -1
+EXISTING: 0 (
+35781696
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+PUT: 5
+********
+35773824
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+--
+35781696
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+********
+are same
+PUT2: 5
+START WITH itemList
+35771392
+[List -> Pair •, (]
+[List -> Pair •, END]
+START WITH itemList
+35773824
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+Node KEy: -1
+EXISTING: 0 )
+35787344
+[Pair -> ( ) •, (]
+[Pair -> ( ) •, END]
+PUT: 5
+PUT2: 6
+Node KEy: -1
+EXISTING: 0 Pair
+35789296
+[Pair -> ( Pair •) , (]
+[Pair -> ( Pair •) , END]
+PUT: 6
+PUT2: 7
+Node KEy: -1
+EXISTING: 0 (
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 7
+PUT2: 8
+START WITH itemList
+35779264
+[List -> List Pair •, (]
+[List -> List Pair •, END]
+START WITH itemList
+35781696
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+********
+35787344
+[Pair -> ( ) •, (]
+[Pair -> ( ) •, END]
+--
+35794736
+[Pair -> ( ) •, (]
+[Pair -> ( ) •, END]
+********
+are same
+Node KEy: 35787344
+EXISTING: 35787344 )
+********
+35789296
+[Pair -> ( Pair •) , (]
+[Pair -> ( Pair •) , END]
+--
+35796304
+[Pair -> ( Pair •) , (]
+[Pair -> ( Pair •) , END]
+********
+are same
+Node KEy: 35789296
+EXISTING: 35789296 Pair
+Node KEy: -1
+EXISTING: 0 (
+35797920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 8
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35797920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 8
+START WITH itemList
+35787344
+[Pair -> ( ) •, (]
+[Pair -> ( ) •, END]
+START WITH itemList
+35789296
+[Pair -> ( Pair •) , (]
+[Pair -> ( Pair •) , END]
+Node KEy: -1
+EXISTING: 0 )
+35801360
+[Pair -> ( Pair ) •, (]
+[Pair -> ( Pair ) •, END]
+PUT: 8
+PUT2: 9
+START WITH itemList
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35803536
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 9
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35803536
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 9
+Node KEy: -1
+EXISTING: 0 )
+35806400
+[Pair -> ( ) •, )]
+PUT: 9
+PUT2: 10
+Node KEy: -1
+EXISTING: 0 Pair
+35807584
+[Pair -> ( Pair •) , )]
+PUT: 10
+PUT2: 11
+START WITH itemList
+35797920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35809136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 11
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35809136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 11
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35812000
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35812960
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35801360
+[Pair -> ( Pair ) •, (]
+[Pair -> ( Pair ) •, END]
+START WITH itemList
+35803536
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35814384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 11
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35814384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 11
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35817248
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35818208
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35806400
+[Pair -> ( ) •, )]
+START WITH itemList
+35807584
+[Pair -> ( Pair •) , )]
+Node KEy: -1
+EXISTING: 0 )
+35819552
+[Pair -> ( Pair ) •, )]
+PUT: 11
+PUT2: 12
+START WITH itemList
+35809136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35821376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35821376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35824240
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35825200
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35814384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35826528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35826528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35829392
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35830352
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35819552
+[Pair -> ( Pair ) •, )]
+START WITH itemList
+35821376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35831776
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35831776
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35834640
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35835600
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35826528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35836928
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35836928
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35839792
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35840752
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35831776
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35842080
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35842080
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35844944
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35845904
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35836928
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35847232
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35847232
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35850096
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35851056
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35842080
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35852384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35852384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35855568
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35856528
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35847232
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35857856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35857856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35860720
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35861680
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35852384
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35863008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35863008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35865872
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35866832
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35857856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35868160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35868160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35871024
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35871984
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35863008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35873312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35873312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35876176
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35877136
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35868160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35878464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35878464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35881328
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35882288
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35873312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35883616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35883616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35886480
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35887440
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35878464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35888768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35888768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35891632
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35892592
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35883616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35893920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35893920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35896784
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35897744
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35888768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35899072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35899072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35901936
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35902896
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35893920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35904224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35904224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35907088
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35908048
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35899072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35909376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35909376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35912240
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35913200
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35904224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35914528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35914528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35917392
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35918352
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35909376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35919680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35919680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35922544
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35855280
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35914528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35925488
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35925488
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35928352
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35929312
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35919680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35930640
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35930640
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35933504
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35934464
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35925488
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35935792
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35935792
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35938656
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35939616
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35930640
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35940944
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35940944
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35943808
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35944768
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35935792
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35946096
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35946096
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35948960
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35949920
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35940944
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35951248
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35951248
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35954112
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35955072
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35946096
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35956400
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35956400
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35959264
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35960224
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35951248
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35961552
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35961552
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35964416
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35965376
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35956400
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35966704
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35966704
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35969568
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35970528
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35961552
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35971856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35971856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35974720
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35975680
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35966704
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35977008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35977008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35979872
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35980832
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35971856
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35982160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35982160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35985024
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35985984
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35977008
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35987312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35987312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35990176
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35991136
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35982160
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35992464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35992464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35995328
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+35996288
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35987312
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+35997616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+35997616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36000480
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36001440
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35992464
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36002768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36002768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36005632
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36006592
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+35997616
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36007920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36007920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36010784
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36011744
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36002768
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36013072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36013072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36015936
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36016896
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36007920
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36018224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36018224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36021088
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36022048
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36013072
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36023376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36023376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36026240
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36027200
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36018224
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36028528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36028528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36031392
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36032352
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36023376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36033680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36033680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36036544
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36037504
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36028528
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36038832
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36038832
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36041696
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36042656
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36033680
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36043984
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36043984
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36046848
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36047808
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36038832
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36049136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36049136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36052000
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36052960
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36043984
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36054288
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36054288
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36057152
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36058112
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36049136
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36059440
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36059440
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+35923472
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36064544
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36054288
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36065872
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36065872
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36068736
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36069696
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36059440
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36071024
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36071024
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36073888
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36074848
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36065872
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36076176
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36076176
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36079040
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36080000
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36071024
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36081328
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36081328
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36084192
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36085152
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36076176
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36086480
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36086480
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36089344
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36090304
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36081328
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36091632
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36091632
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36094496
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36095456
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36086480
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36096784
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36096784
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36099648
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36100608
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36091632
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36101936
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36101936
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36104800
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36105760
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36096784
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36107088
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36107088
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36109952
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36110912
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36101936
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36112240
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36112240
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36115104
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36116064
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36107088
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36117392
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36117392
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36120256
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36121216
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36112240
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36122544
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36122544
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36125408
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36126368
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36117392
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36127696
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36127696
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36130560
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36131520
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36122544
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36132848
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36132848
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36135712
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36136672
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36127696
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36138000
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36138000
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36140864
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36141824
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36132848
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36143152
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36143152
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36146016
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36146976
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36138000
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36148304
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36148304
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36151168
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36152128
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36143152
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36153456
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36153456
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36156320
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36157280
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36148304
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36158608
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36158608
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36161472
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36162432
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36153456
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36163760
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36163760
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36166624
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36167584
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36158608
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36168912
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36168912
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36171776
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36172736
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36163760
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36174064
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36174064
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36176928
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36177888
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36168912
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36179216
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36179216
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36182080
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36183040
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36174064
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36184368
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36184368
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36187232
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36188192
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36179216
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36189520
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36189520
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36192384
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36193344
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36184368
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36194672
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36194672
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36197536
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36198496
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36189520
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36199824
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36199824
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36202688
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36203648
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36194672
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36204976
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36204976
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36207840
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36208800
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36199824
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36210128
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36210128
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36212992
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36213952
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36204976
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36215280
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36215280
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36218144
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36219104
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36210128
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36220432
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36220432
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36223296
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36224256
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36215280
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36225584
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36225584
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36228448
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36229408
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36220432
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36230736
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36230736
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36233600
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36234560
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36225584
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36235888
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36235888
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36238752
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36239712
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36230736
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36241040
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36241040
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36243904
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36244864
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36235888
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36246192
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36246192
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36249056
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36250016
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36241040
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+Node KEy: -1
+EXISTING: 0 (
+36251344
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+PUT: 12
+********
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+--
+36251344
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+********
+are same
+PUT2: 12
+********
+35806400
+[Pair -> ( ) •, )]
+--
+36254208
+[Pair -> ( ) •, )]
+********
+are same
+Node KEy: 35806400
+EXISTING: 35806400 )
+********
+35807584
+[Pair -> ( Pair •) , )]
+--
+36255168
+[Pair -> ( Pair •) , )]
+********
+are same
+Node KEy: 35807584
+EXISTING: 35807584 Pair
+START WITH itemList
+36246192
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+100
+----CC0----
+35773824
+[Pair -> ( •) , (]
+[Pair -> ( •Pair ) , (]
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , END]
+[Pair -> ( •Pair ) , END]
+----CC1----
+35766240
+[Goal -> List •, END]
+[List -> List •Pair , (]
+[List -> List •Pair , END]
+[Pair -> •( ) , (]
+[Pair -> •( Pair ) , (]
+[Pair -> •( ) , END]
+[Pair -> •( Pair ) , END]
+----CC2----
+35819552
+[Pair -> ( Pair ) •, )]
+----CC3----
+35801360
+[Pair -> ( Pair ) •, (]
+[Pair -> ( Pair ) •, END]
+----CC4----
+35806400
+[Pair -> ( ) •, )]
+----CC5----
+35789296
+[Pair -> ( Pair •) , (]
+[Pair -> ( Pair •) , END]
+----CC6----
+35760880
+[Goal -> •List , END]
+[List -> •List Pair , END]
+[List -> •Pair , END]
+[Pair -> •( Pair ) , END]
+[Pair -> •( ) , END]
+[List -> •List Pair , (]
+[List -> •Pair , (]
+[Pair -> •( Pair ) , (]
+[Pair -> •( ) , (]
+----CC7----
+35779264
+[List -> List Pair •, (]
+[List -> List Pair •, END]
+----CC8----
+35791376
+[Pair -> •( ) , )]
+[Pair -> •( Pair ) , )]
+[Pair -> ( •) , )]
+[Pair -> ( •Pair ) , )]
+----CC9----
+35807584
+[Pair -> ( Pair •) , )]
+----CC10----
+35771392
+[List -> Pair •, (]
+[List -> Pair •, END]
+----CC11----
+35787344
+[Pair -> ( ) •, (]
+[Pair -> ( ) •, END]

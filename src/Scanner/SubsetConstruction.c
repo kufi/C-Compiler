@@ -4,28 +4,18 @@
 #include <stdbool.h>
 #include <string.h>
 #include "../Util/Collections/ArrayList.h"
+#include "../Util/Collections/Queue.h"
 
 typedef struct Configuration {
   int id;
   ArrayList *states;
 } Configuration;
 
-typedef struct ConfigurationWorklistItem {
-  Configuration *configuration;
-  struct ConfigurationWorklistItem *next;
-} ConfigurationWorklistItem;
-
 typedef struct Transition {
   Configuration *from;
   Configuration *to;
   char character;
 } Transition;
-
-typedef struct TransitionList {
-  int usedTransitions;
-  int transitionSize;
-  Transition **transitions;
-} TransitionList;
 
 Configuration *createConfiguration(int id, int size)
 {
@@ -70,15 +60,6 @@ Configuration *tryGetExistingConfiguration(ArrayList *list, Configuration *check
   }
 
   return NULL;
-}
-
-ConfigurationWorklistItem *createWorklistItem(Configuration *configuration, ConfigurationWorklistItem *next)
-{
-  ConfigurationWorklistItem *worklistItem = malloc(sizeof(ConfigurationWorklistItem));
-  worklistItem->configuration = configuration;
-  worklistItem->next = next;
-
-  return worklistItem;
 }
 
 Configuration *eClosure(Configuration *configuration)
@@ -177,24 +158,9 @@ Transition *createTransition(Configuration *from, Configuration *to, char c)
   return transition;
 }
 
-TransitionList *createTransitionList()
+void addTransition(ArrayList *list, Transition *transition)
 {
-  TransitionList *list = malloc(sizeof(TransitionList));
-  list->usedTransitions = 0;
-  list->transitionSize = 10;
-  list->transitions = malloc(sizeof(Transition *) * list->transitionSize);
-  return list;
-}
-
-void addTransition(TransitionList *list, Transition *transition)
-{
-  if(list->usedTransitions == list->transitionSize)
-  {
-    list->transitionSize = list->transitionSize * 2;
-    list->transitions = realloc(list->transitions, sizeof(Transition *) * list->transitionSize);
-  }
-
-  list->transitions[list->usedTransitions++] = transition;
+  arrayListPush(list, transition);
 }
 
 void createStatesFromConfigurations(DFA *dfa, ArrayList *configurations)
@@ -208,11 +174,11 @@ void createStatesFromConfigurations(DFA *dfa, ArrayList *configurations)
   }
 }
 
-void createDFATransitions(DFA *dfa, TransitionList *transitions)
+void createDFATransitions(DFA *dfa, ArrayList *transitions)
 {
-  for(int i = 0; i < transitions->usedTransitions; i++)
+  for(int i = 0; i < arrayListCount(transitions); i++)
   {
-    Transition *trans = transitions->transitions[i];
+    Transition *trans = arrayListGet(transitions, i);
     DFAState *from = arrayListGet(dfa->states, trans->from->id);
     DFAState *to = arrayListGet(dfa->states, trans->to->id);
 
@@ -234,19 +200,17 @@ DFA *subsetConstruction(NFA *nfa, char *characterSet)
   ArrayList *configurations = arrayListCreate(10, sizeof(Configuration *));
   arrayListPush(configurations, q0);
 
-  TransitionList *transitions = createTransitionList();
+  ArrayList *transitions = arrayListCreate(10, sizeof(Transition *));
 
-  ConfigurationWorklistItem *nextWorklistItem = createWorklistItem(q0, NULL);
-  ConfigurationWorklistItem *lastWorklistItem = nextWorklistItem;
+  Queue *worklist = queueCreate();
 
-  while(nextWorklistItem != NULL)
+  Configuration *config = q0;
+  while(config != NULL)
   {
-    ConfigurationWorklistItem *check = nextWorklistItem;
-
     for(int i = 0; i < strlen(characterSet); i++)
     {
       char character = characterSet[i];
-      Configuration *charConfiguration = eClosure(delta(check->configuration, character));
+      Configuration *charConfiguration = eClosure(delta(config, character));
 
       if(arrayListCount(charConfiguration->states) == 0) continue;
 
@@ -256,20 +220,17 @@ DFA *subsetConstruction(NFA *nfa, char *characterSet)
       {
         charConfiguration->id = arrayListCount(configurations);
         arrayListPush(configurations, charConfiguration);
-
-        ConfigurationWorklistItem *newWorklistItem = createWorklistItem(charConfiguration, NULL);
-        lastWorklistItem->next = newWorklistItem;
-        lastWorklistItem = newWorklistItem;
+        queueEnqueue(worklist, charConfiguration);
       }
       else
       {
         charConfiguration = existingCharConfiguration;
       }
 
-      addTransition(transitions, createTransition(check->configuration, charConfiguration, character));
+      addTransition(transitions, createTransition(config, charConfiguration, character));
     }
 
-    nextWorklistItem = nextWorklistItem->next;
+    config = queueDequeue(worklist);
   }
 
   DFA *dfa = malloc(sizeof(DFA));

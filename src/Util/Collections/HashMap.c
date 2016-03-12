@@ -146,7 +146,7 @@ void hashMapSet(HashMap *map, void *key, void *data)
   hashMapRehash(map);
 }
 
-void *hashMapGet(HashMap *map, void *key)
+HashMapNode *hashMapGetNode(HashMap *map, void *key)
 {
   uint32_t hash = map->hashFunction(key);
 
@@ -159,9 +159,15 @@ void *hashMapGet(HashMap *map, void *key)
     HashMapNode *hashMapNode = node->item;
     if(hashMapNode->hash == hash && map->compareFunction(hashMapNode->key, key))
     {
-      return hashMapNode->data;
+      return hashMapNode;
     }
   }
 
   return NULL;
+}
+
+void *hashMapGet(HashMap *map, void *key)
+{
+  HashMapNode *node = hashMapGetNode(map, key);
+  return node != NULL ? node->data : NULL;
 }

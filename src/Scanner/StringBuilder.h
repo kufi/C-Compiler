@@ -9,6 +9,10 @@ typedef struct StringBuilder {
 
 StringBuilder createStringBuilder();
 
+StringBuilder stringBuilderCreateFull(int initialSize);
+
+void appendChars(StringBuilder *builder, char *c);
+
 void appendChar(StringBuilder *builder, char c);
 
 void removeLastChar(StringBuilder *builder);
