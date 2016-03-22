@@ -1,26 +1,22 @@
 #ifndef GRAMMAR_HEADER
 #define GRAMMAR_HEADER
 
+#include "../Util/Collections/ArrayList.h"
+
 extern char *END;
 extern char *EMPTY;
 
 typedef struct Rule {
-  int usedSymbols;
-  int symbolSize;
-  char **symbols;
+  ArrayList *symbols;
 } Rule;
 
 typedef struct Production {
   char *name;
-  int usedRules;
-  int ruleSize;
-  Rule **rules;
+  ArrayList *rules;
 } Production;
 
 typedef struct Grammar {
-  int usedProductions;
-  int productionSize;
-  Production **productions;
+  ArrayList *productions;
 } Grammar;
 
 Grammar *createGrammar();

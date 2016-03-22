@@ -92,23 +92,23 @@ void printDFA(DFA *dfa)
 
 void printGrammar(Grammar *grammar)
 {
-  for(int i = 0; i < grammar->usedProductions; i++)
+  for(int i = 0; i < arrayListCount(grammar->productions); i++)
   {
-    Production *production = grammar->productions[i];
+    Production *production = arrayListGet(grammar->productions, i);
     printf("%s\n", production->name);
-    for(int j = 0; j < production->usedRules; j++)
+    for(int j = 0; j < arrayListCount(production->rules); j++)
     {
-      Rule *rule = production->rules[j];
+      Rule *rule = arrayListGet(production->rules, j);
       printf(" |");
 
-      if(rule->symbols[0] == EMPTY)
+      if(arrayListGet(rule->symbols, 0) == EMPTY)
       {
         printf("\n");
         continue;
       }
-      for(int k = 0; k < rule->usedSymbols; k++)
+      for(int k = 0; k < arrayListCount(rule->symbols); k++)
       {
-        printf(" %s", rule->symbols[k]);
+        printf(" %s", arrayListGet(rule->symbols, k));
       }
       printf("\n");
     }

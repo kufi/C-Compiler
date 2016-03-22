@@ -7,6 +7,7 @@
 #include "../Util/Collections/ArrayList.h"
 #include "../Util/Collections/Queue.h"
 #include "../Util/Collections/HashSet.h"
+#include "../Util/Collections/HashMap.h"
 #include "../Scanner/StringBuilder.h"
 
 typedef struct LR1Item {
@@ -18,22 +19,8 @@ typedef struct LR1Item {
 
 typedef struct FirstSet {
   char *name;
-  int usedTerminals;
-  int terminalSize;
-  char **terminals;
+  ArrayList *terminals;
 } FirstSet;
-
-typedef struct FirstSets {
-  int usedSets;
-  int setSize;
-  FirstSet **sets;
-} FirstSets;
-
-typedef struct LR1ItemWorklist {
-  LR1Item **items;
-  int size;
-  int maxSize;
-} LR1ItemWorklist;
 
 typedef struct Transition {
   ArrayList *from;
@@ -46,12 +33,12 @@ LR1Item *createLR1Item(char *name, Rule *rule, char *lookahead)
   LR1Item *item = calloc(1, sizeof(LR1Item));
   item->production = strdup(name);
   item->dotPosition = 0;
-  item->symbols = arrayListCreate(rule->usedSymbols, sizeof(char *));
+  item->symbols = arrayListCreate(arrayListCount(rule->symbols), sizeof(char *));
   item->lookahead = lookahead;
 
-  for(int i = 0; i < rule->usedSymbols; i++)
+  for(int i = 0; i < arrayListCount(rule->symbols); i++)
   {
-    arrayListPush(item->symbols, strdup(rule->symbols[i]));
+    arrayListPush(item->symbols, strdup(arrayListGet(rule->symbols, i)));
   }
 
   return item;
@@ -61,88 +48,69 @@ ArrayList *createLR1Items(Production *production)
 {
   ArrayList *list = arrayListCreate(10, sizeof(LR1Item *));
 
-  for(int i =0; i < production->usedRules; i++)
+  for(int i =0; i < arrayListCount(production->rules); i++)
   {
-    Rule *rule = production->rules[i];
-    arrayListPush(list, createLR1Item(production->name, rule, END));
+    arrayListPush(list, createLR1Item(production->name, arrayListGet(production->rules, i), END));
   }
 
   return list;
 }
 
-void addSet(FirstSets *sets, FirstSet *set)
+void addSet(HashMap *sets, FirstSet *set)
 {
-  if(sets->usedSets == sets->setSize)
-  {
-    sets->setSize = sets->setSize * 2;
-    sets->sets = realloc(sets->sets, sizeof(FirstSet *) * sets->setSize);
-  }
-
-  sets->sets[sets->usedSets++] = set;
+  hashMapSet(sets, set->name, set);
 }
 
 FirstSet *createFirstSet(char *name)
 {
   FirstSet *set = calloc(1, sizeof(FirstSet));
-  set->usedTerminals = 0;
-  set->terminalSize = 5;
-  set->terminals = calloc(set->terminalSize, sizeof(char *));
+  set->terminals = arrayListCreate(5, sizeof(char *));
   set->name = name;
   return set;
 }
 
 void addTerminal(FirstSet *set, char *terminal)
 {
-  if(set->usedTerminals == set->terminalSize)
-  {
-    set->terminalSize = set->terminalSize * 2;
-    set->terminals = realloc(set->terminals, sizeof(FirstSet *) * set->terminalSize);
-  }
-
-  set->terminals[set->usedTerminals++] = terminal;
+  arrayListPush(set->terminals, terminal);
 }
 
-FirstSet *findSet(FirstSets *sets, char *name)
+FirstSet *findSet(HashSet *sets, char *name)
 {
-  for(int i = 0; i < sets->usedSets; i++)
-  {
-    FirstSet *set = sets->sets[i];
-
-    if(strcmp(set->name, name) == 0) return set;
-  }
-
-  return NULL;
+  return hashMapGet(sets, name);
 }
 
 FirstSet *copySet(FirstSet *set)
 {
   FirstSet *copy = calloc(1, sizeof(FirstSet));
   *copy = *set;
-  copy->terminals = calloc(set->terminalSize, sizeof(char *));
-  memcpy(copy->terminals, set->terminals, sizeof(char *) * set->terminalSize);
+  copy->terminals = arrayListCreate(arrayListCount(set->terminals), sizeof(char *));
+  for(int i = 0; i < arrayListCount(set->terminals); i++)
+  {
+    arrayListPush(copy->terminals, strdup(arrayListGet(set->terminals, i)));
+  }
 
   return copy;
 }
 
 bool setContainsEmpty(FirstSet *set)
 {
-  if(set->usedTerminals == 0) return false;
-  return set->terminals[set->usedTerminals - 1] == EMPTY;
+  if(arrayListCount(set->terminals) == 0) return false;
+  return arrayListGet(set->terminals, arrayListCount(set->terminals)) == EMPTY;
 }
 
 void removeEmptyFromSet(FirstSet *set)
 {
   if(setContainsEmpty(set))
   {
-    --set->usedTerminals;
+    arrayListPop(set->terminals);
   }
 }
 
 bool setContainsTerminal(FirstSet *set, char *search)
 {
-  for(int i = 0; i < set->usedTerminals; i++)
+  for(int i = 0; i < arrayListCount(set->terminals); i++)
   {
-    char *terminal = set->terminals[i];
+    char *terminal = arrayListGet(set->terminals, i);
 
     if(terminal == EMPTY && search == EMPTY) return true;
     if(terminal != EMPTY && strcmp(terminal, search) == 0) return true;
@@ -155,19 +123,16 @@ void combineSets(FirstSet *first, FirstSet *second)
 {
   if(second == NULL) return;
 
-  for(int i = 0; i < second->usedTerminals; i++)
+  for(int i = 0; i < arrayListCount(second->terminals); i++)
   {
-    char *terminal = second->terminals[i];
+    char *terminal = arrayListGet(second->terminals, i);
     if(!setContainsTerminal(first, terminal)) addTerminal(first, terminal);
   }
 }
 
-FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
+HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
 {
-  FirstSets *sets = malloc(sizeof(FirstSets));
-  sets->usedSets = 0;
-  sets->setSize = 10;
-  sets->sets = malloc(sizeof(FirstSet *) * sets->setSize);
+  HashMap *sets = hashMapCreate(10);
 
   FirstSet *empty = createFirstSet(EMPTY);
   addTerminal(empty, EMPTY);
@@ -185,11 +150,10 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
     addSet(sets, set);
   }
 
-  for(int i = 0; i < grammar->usedProductions; i++)
+  for(int i = 0; i < arrayListCount(grammar->productions); i++)
   {
-    Production *prod = grammar->productions[i];
-    FirstSet *set = createFirstSet(prod->name);
-    addSet(sets, set);
+    Production *prod = arrayListGet(grammar->productions, i);
+    addSet(sets, createFirstSet(prod->name));
   }
 
   bool changing;
@@ -198,24 +162,24 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
   {
     changing = false;
 
-    for(int i = 0; i < grammar->usedProductions; i++)
+    for(int i = 0; i < arrayListCount(grammar->productions); i++)
     {
-      Production *prod = grammar->productions[i];
+      Production *prod = arrayListGet(grammar->productions, i);
 
       FirstSet *prodSet = findSet(sets, prod->name);
 
-      for(int j = 0; j < prod->usedRules; j++)
+      for(int j = 0; j < arrayListCount(prod->rules); j++)
       {
-        Rule *rule = prod->rules[j];
+        Rule *rule = arrayListGet(prod->rules, j);
 
-        FirstSet *rhs = copySet(findSet(sets, rule->symbols[0]));
+        FirstSet *rhs = copySet(findSet(sets, arrayListGet(rule->symbols, 0)));
         bool containsEmpty = setContainsEmpty(rhs);
         removeEmptyFromSet(rhs);
 
         int k = 1;
-        for(; k < rule->usedSymbols && containsEmpty; k++)
+        for(; k < arrayListCount(rule->symbols) && containsEmpty; k++)
         {
-          char *symbol = rule->symbols[k];
+          char *symbol = arrayListGet(rule->symbols, k);
 
           FirstSet *symbolSet = copySet(findSet(sets, symbol));
           containsEmpty = setContainsEmpty(symbolSet);
@@ -223,15 +187,15 @@ FirstSets *createFirstSets(Grammar *grammar, ScannerConfig *config)
           combineSets(rhs, symbolSet);
         }
 
-        if(k == rule->usedSymbols && containsEmpty)
+        if(k == arrayListCount(rule->symbols) && containsEmpty)
         {
           addTerminal(rhs, EMPTY);
         }
 
-        int oldSize = prodSet->usedTerminals;
+        int oldSize = arrayListCount(prodSet->terminals);
         combineSets(prodSet, rhs);
 
-        changing |= oldSize != prodSet->usedTerminals;
+        changing |= oldSize != arrayListCount(prodSet->terminals);
       }
     }
   } while(changing);
@@ -253,9 +217,9 @@ Production *getProductionForSymbol(Grammar *grammar, char *symbol)
 {
   if(symbol == NULL) return NULL;
 
-  for(int i = 0; i < grammar->usedProductions; i++)
+  for(int i = 0; i < arrayListCount(grammar->productions); i++)
   {
-    Production *production = grammar->productions[i];
+    Production *production = arrayListGet(grammar->productions, i);
     if(strcmp(production->name, symbol) == 0) return production;
   }
 
@@ -283,7 +247,7 @@ char **getLookaheadSymbols(LR1Item *item, char *lookahead)
   return lookaheadsSymbols;
 }
 
-FirstSet *getFirstSetForLookaheads(char **lookaheads, int lookaheadSize, FirstSets *sets)
+FirstSet *getFirstSetForLookaheads(char **lookaheads, int lookaheadSize, HashMap *sets)
 {
   FirstSet *resultingSet = createFirstSet("");
 
@@ -361,55 +325,30 @@ ArrayList *copyLR1ItemList(ArrayList *list)
   return newList;
 }
 
-LR1ItemWorklist *createWorklist()
-{
-  LR1ItemWorklist *worklist = malloc(sizeof(LR1ItemWorklist));
-  worklist->size = 0;
-  worklist->maxSize = 10;
-  worklist->items = malloc(sizeof(LR1Item *) * worklist->maxSize);
-  return worklist;
-}
-
-void addToWorklist(LR1ItemWorklist *worklist, LR1Item *item)
-{
-  if(worklist->maxSize == worklist->size)
-  {
-    worklist->maxSize = worklist->maxSize * 2;
-    worklist->items = realloc(worklist->items, sizeof(LR1Item *) * worklist->maxSize);
-  }
-
-  worklist->items[worklist->size++] = item;
-}
-
-LR1Item *removeFromWorklist(LR1ItemWorklist *worklist)
-{
-  return worklist->items[--worklist->size];;
-}
-
-ArrayList *closure(ArrayList *list, Grammar *grammar, FirstSets *sets)
+ArrayList *closure(ArrayList *list, Grammar *grammar, HashMap *sets)
 {
   ArrayList *newList = copyLR1ItemList(list);
-  LR1ItemWorklist *worklist = createWorklist();
+  Queue *worklist = queueCreate();
 
-  for(int i = 0; i < arrayListCount(newList); i++) addToWorklist(worklist, arrayListGet(newList, i));
+  for(int i = 0; i < arrayListCount(newList); i++) queueEnqueue(worklist, arrayListGet(newList, i));
 
-  while(worklist->size > 0)
+  LR1Item *item;
+  while((item = queueDequeue(worklist)) != NULL)
   {
-    LR1Item *item = removeFromWorklist(worklist);
     Production *production = getProductionForSymbol(grammar, getNextSymbol(item));
 
     if(production == NULL) continue;
 
     FirstSet *set = getFirstSetForLookaheads(getLookaheadSymbols(item, item->lookahead), getLookaheadSymbolsSize(item), sets);
 
-    for(int j = 0; j < production->usedRules; j++)
+    for(int j = 0; j < arrayListCount(production->rules); j++)
     {
-      Rule *rule = production->rules[j];
+      Rule *rule = arrayListGet(production->rules, j);
 
-      for(int k = 0; k < set->usedTerminals; k++)
+      for(int k = 0; k < arrayListCount(set->terminals); k++)
       {
-        LR1Item *ruleItem = createLR1Item(production->name, rule, set->terminals[k]);
-        if(addLR1ItemToList(newList, ruleItem)) addToWorklist(worklist, ruleItem);
+        LR1Item *ruleItem = createLR1Item(production->name, rule, arrayListGet(set->terminals, k));
+        if(addLR1ItemToList(newList, ruleItem)) queueEnqueue(worklist, ruleItem);
       }
     }
   }
@@ -424,7 +363,7 @@ char *getDotSymbol(LR1Item *item)
   return arrayListGet(item->symbols, item->dotPosition);
 }
 
-ArrayList *goTo(ArrayList *list, char *symbol, Grammar *grammar, FirstSets *firstSets)
+ArrayList *goTo(ArrayList *list, char *symbol, Grammar *grammar, HashMap *firstSets)
 {
   ArrayList *moved = arrayListCreate(10, sizeof(LR1Item *));
 
@@ -572,9 +511,9 @@ int itemListCompare(const void *a, const void *b)
 
 Parser *createParser(Grammar *grammar, ScannerConfig *config)
 {
-  Production *goalProduction = grammar->productions[0];
+  Production *goalProduction = arrayListGet(grammar->productions, 0);
 
-  FirstSets *sets = createFirstSets(grammar, config);
+  HashMap *sets = createFirstSets(grammar, config);
   ArrayList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
 
   HashSet *cc = hashSetCreateFull(0, 0.0f, ccCompare, ccHash);
@@ -603,6 +542,7 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
 
       if(existing == NULL)
       {
+        printLR1ItemList(temp);
         hashSetPut(cc, temp);
         queueEnqueue(worklist, temp);
         existing = temp;
