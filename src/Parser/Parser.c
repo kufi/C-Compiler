@@ -12,10 +12,15 @@
 
 typedef struct LR1Item {
   char *production;
+  Rule *rule;
   int dotPosition;
-  ArrayList *symbols;
   char *lookahead;
 } LR1Item;
+
+typedef struct LR1ItemList {
+  int number;
+  ArrayList *items;
+} LR1ItemList;
 
 typedef struct FirstSet {
   char *name;
@@ -32,25 +37,21 @@ LR1Item *createLR1Item(char *name, Rule *rule, char *lookahead)
 {
   LR1Item *item = calloc(1, sizeof(LR1Item));
   item->production = strdup(name);
+  item->rule = rule;
   item->dotPosition = 0;
-  item->symbols = arrayListCreate(arrayListCount(rule->symbols), sizeof(char *));
   item->lookahead = lookahead;
-
-  for(int i = 0; i < arrayListCount(rule->symbols); i++)
-  {
-    arrayListPush(item->symbols, strdup(arrayListGet(rule->symbols, i)));
-  }
 
   return item;
 }
 
-ArrayList *createLR1Items(Production *production)
+LR1ItemList *createLR1Items(Production *production)
 {
-  ArrayList *list = arrayListCreate(10, sizeof(LR1Item *));
+  LR1ItemList *list = calloc(1, sizeof(LR1ItemList));
+  list->items = arrayListCreate(10, sizeof(LR1Item *));
 
   for(int i =0; i < arrayListCount(production->rules); i++)
   {
-    arrayListPush(list, createLR1Item(production->name, arrayListGet(production->rules, i), END));
+    arrayListPush(list->items, createLR1Item(production->name, arrayListGet(production->rules, i), END));
   }
 
   return list;
@@ -205,9 +206,9 @@ HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
 
 char *getNextSymbol(LR1Item *item)
 {
-  if(item->dotPosition < arrayListCount(item->symbols))
+  if(item->dotPosition < arrayListCount(item->rule->symbols))
   {
-    return arrayListGet(item->symbols, item->dotPosition);
+    return arrayListGet(item->rule->symbols, item->dotPosition);
   }
 
   return NULL;
@@ -228,7 +229,7 @@ Production *getProductionForSymbol(Grammar *grammar, char *symbol)
 
 int getLookaheadSymbolsSize(LR1Item *item)
 {
-  return arrayListCount(item->symbols) - item->dotPosition;
+  return arrayListCount(item->rule->symbols) - item->dotPosition;
 }
 
 char **getLookaheadSymbols(LR1Item *item, char *lookahead)
@@ -237,9 +238,9 @@ char **getLookaheadSymbols(LR1Item *item, char *lookahead)
   char **lookaheadsSymbols = malloc(sizeof(char *) * remainingSymbols);
 
   int lookaheadPosition = 0;
-  for(int i = item->dotPosition + 1; i < arrayListCount(item->symbols); i++)
+  for(int i = item->dotPosition + 1; i < arrayListCount(item->rule->symbols); i++)
   {
-    lookaheadsSymbols[lookaheadPosition++] = arrayListGet(item->symbols, i);
+    lookaheadsSymbols[lookaheadPosition++] = arrayListGet(item->rule->symbols, i);
   }
 
   lookaheadsSymbols[lookaheadPosition] = lookahead;
@@ -267,14 +268,8 @@ FirstSet *getFirstSetForLookaheads(char **lookaheads, int lookaheadSize, HashMap
 bool areLR1ItemsSame(LR1Item *first, LR1Item *second)
 {
   if(first->dotPosition != second->dotPosition) return false;
-  if(arrayListCount(first->symbols) != arrayListCount(second->symbols)) return false;
+  if(first->rule != second->rule) return false;
   if(strcmp(first->lookahead, second->lookahead) != 0) return false;
-
-  for(int i = 0; i < arrayListCount(first->symbols); i++)
-  {
-    if(strcmp(arrayListGet(first->symbols, i), arrayListGet(second->symbols, i)) != 0) return false;
-  }
-
   return true;
 }
 
@@ -290,10 +285,10 @@ bool itemListContainsItem(ArrayList *list, LR1Item *searchItem)
   return false;
 }
 
-bool addLR1ItemToList(ArrayList *list, LR1Item *item)
+bool addLR1ItemToList(LR1ItemList *list, LR1Item *item)
 {
-  if(itemListContainsItem(list, item)) return false;
-  arrayListPush(list, item);
+  if(itemListContainsItem(list->items, item)) return false;
+  arrayListPush(list->items, item);
   return true;
 }
 
@@ -302,35 +297,36 @@ LR1Item *copyLR1Item(LR1Item *item)
   LR1Item *newItem = malloc(sizeof(LR1Item));
   newItem->production = strdup(item->production);
   newItem->dotPosition = item->dotPosition;
-  newItem->symbols = arrayListCreate(arrayListCount(item->symbols), sizeof(char *));
+  newItem->rule = item->rule;
   newItem->lookahead = strdup(item->lookahead);
-
-  for(int i = 0; i < arrayListCount(item->symbols); i++)
-  {
-    arrayListPush(newItem->symbols, strdup(arrayListGet(item->symbols, i)));
-  }
-
   return newItem;
 }
 
-ArrayList *copyLR1ItemList(ArrayList *list)
+int nextItemListNumber()
 {
-  ArrayList *newList = arrayListCreate(arrayListCount(list), sizeof(LR1Item *));
+  static int number = 0;
+  return number++;
+}
 
-  for(int i = 0; i < arrayListCount(list); i++)
+LR1ItemList *copyLR1ItemList(LR1ItemList *list)
+{
+  LR1ItemList *newList = calloc(1, sizeof(LR1ItemList));
+  newList->items = arrayListCreate(arrayListCount(list->items), sizeof(LR1Item *));
+
+  for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    arrayListPush(newList, copyLR1Item(arrayListGet(list, i)));
+    arrayListPush(newList->items, copyLR1Item(arrayListGet(list->items, i)));
   }
 
   return newList;
 }
 
-ArrayList *closure(ArrayList *list, Grammar *grammar, HashMap *sets)
+LR1ItemList *closure(LR1ItemList *list, Grammar *grammar, HashMap *sets)
 {
-  ArrayList *newList = copyLR1ItemList(list);
+  LR1ItemList *newList = copyLR1ItemList(list);
   Queue *worklist = queueCreate();
 
-  for(int i = 0; i < arrayListCount(newList); i++) queueEnqueue(worklist, arrayListGet(newList, i));
+  for(int i = 0; i < arrayListCount(newList->items); i++) queueEnqueue(worklist, arrayListGet(newList->items, i));
 
   LR1Item *item;
   while((item = queueDequeue(worklist)) != NULL)
@@ -358,18 +354,19 @@ ArrayList *closure(ArrayList *list, Grammar *grammar, HashMap *sets)
 
 char *getDotSymbol(LR1Item *item)
 {
-  if(item->dotPosition == arrayListCount(item->symbols)) return NULL;
+  if(item->dotPosition == arrayListCount(item->rule->symbols)) return NULL;
 
-  return arrayListGet(item->symbols, item->dotPosition);
+  return arrayListGet(item->rule->symbols, item->dotPosition);
 }
 
-ArrayList *goTo(ArrayList *list, char *symbol, Grammar *grammar, HashMap *firstSets)
+LR1ItemList *goTo(LR1ItemList *list, char *symbol, Grammar *grammar, HashMap *firstSets)
 {
-  ArrayList *moved = arrayListCreate(10, sizeof(LR1Item *));
+  LR1ItemList *moved = calloc(1, sizeof(LR1ItemList));
+  moved->items = arrayListCreate(10, sizeof(LR1Item *));
 
-  for(int i = 0; i < arrayListCount(list); i++)
+  for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    LR1Item *item = arrayListGet(list, i);
+    LR1Item *item = arrayListGet(list->items, i);
     char *nextSymbol = getDotSymbol(item);
 
     if(nextSymbol != NULL && strcmp(nextSymbol, symbol) == 0)
@@ -383,21 +380,22 @@ ArrayList *goTo(ArrayList *list, char *symbol, Grammar *grammar, HashMap *firstS
   return closure(moved, grammar, firstSets);
 }
 
-void printLR1ItemList(ArrayList *list)
+void printLR1ItemList(LR1ItemList *list)
 {
-  for(int i = 0; i < arrayListCount(list); i++)
+  printf("----CC%i----\n", list->number);
+  for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    LR1Item *item = arrayListGet(list, i);
+    LR1Item *item = arrayListGet(list->items, i);
 
     printf("[%s -> ", item->production);
 
-    for(int j = 0; j < arrayListCount(item->symbols); j++)
+    for(int j = 0; j < arrayListCount(item->rule->symbols); j++)
     {
       if(j == item->dotPosition) printf("\u2022");
-      printf("%s ", (char *)arrayListGet(item->symbols, j));
+      printf("%s ", (char *)arrayListGet(item->rule->symbols, j));
     }
 
-    if(item->dotPosition == arrayListCount(item->symbols)) printf("\u2022");
+    if(item->dotPosition == arrayListCount(item->rule->symbols)) printf("\u2022");
 
     printf(", %s]\n", item->lookahead);
   }
@@ -413,13 +411,13 @@ bool containsSymbol(ArrayList *symbols, char *symbol)
   return false;
 }
 
-ArrayList *getSymbolsFollowingDot(ArrayList *list)
+ArrayList *getSymbolsFollowingDot(LR1ItemList *list)
 {
   ArrayList *following = arrayListCreate(10, sizeof(char *));
 
-  for(int i = 0; i < arrayListCount(list); i++)
+  for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    LR1Item *item = arrayListGet(list, i);
+    LR1Item *item = arrayListGet(list->items, i);
     char *symbol = getDotSymbol(item);
 
     if(symbol != NULL && !containsSymbol(following, symbol))
@@ -431,19 +429,19 @@ ArrayList *getSymbolsFollowingDot(ArrayList *list)
   return following;
 }
 
-bool areLR1ItemListSame(ArrayList *first, ArrayList *second)
+bool areLR1ItemListSame(LR1ItemList *first, LR1ItemList *second)
 {
-  if(arrayListCount(first) != arrayListCount(second)) return false;
+  if(arrayListCount(first->items) != arrayListCount(second->items)) return false;
 
-  for(int i = 0; i < arrayListCount(first); i++)
+  for(int i = 0; i < arrayListCount(first->items); i++)
   {
-    if(!itemListContainsItem(second, arrayListGet(first, i))) return false;
+    if(!itemListContainsItem(second->items, arrayListGet(first->items, i))) return false;
   }
 
   return true;
 }
 
-ArrayList *tryGetExistingItemList(HashSet *collection, ArrayList *search)
+LR1ItemList *tryGetExistingItemList(HashSet *collection, LR1ItemList *search)
 {
   return hashSetGetExisting(collection, search);
 }
@@ -464,9 +462,9 @@ char *createStringFromLR1Item(LR1Item *item)
   snprintf(buffer, 12, "%i", item->dotPosition);
   appendChars(&s, buffer);
 
-  for(int i = 0; i < arrayListCount(item->symbols); i++)
+  for(int i = 0; i < arrayListCount(item->rule->symbols); i++)
   {
-    appendChars(&s, arrayListGet(item->symbols, i));
+    appendChars(&s, arrayListGet(item->rule->symbols, i));
   }
 
   return s.string;
@@ -474,12 +472,12 @@ char *createStringFromLR1Item(LR1Item *item)
 
 uint32_t ccHash(void *hashable)
 {
-  ArrayList *list = (ArrayList *)hashable;
+  LR1ItemList *list = (LR1ItemList *)hashable;
   StringBuilder builder = createStringBuilder();
 
-  for(int i = 0; i < arrayListCount(list); i++)
+  for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    LR1Item *item = arrayListGet(list, i);
+    LR1Item *item = arrayListGet(list->items, i);
     appendChars(&builder, createStringFromLR1Item(item));
   }
 
@@ -509,12 +507,51 @@ int itemListCompare(const void *a, const void *b)
   return strcmp(createStringFromLR1Item(first), createStringFromLR1Item(second));
 }
 
+enum ActionType { SHIFT, REDUCE, ACCEPT };
+
+typedef struct Action {
+  enum ActionType type;
+  char *symbol;
+  union {
+    int toState;
+    Production *toProduction;
+  };
+} Action;
+
+typedef struct GoTo {
+  int number;
+} GoTo;
+
+typedef struct ParseState {
+  int number;
+  ArrayList *actions;
+  ArrayList *gotos;
+} ParseState;
+
+typedef struct ParserTable {
+  ArrayList *states;
+} ParserTable;
+
+static uint32_t transitionsHash(void *a)
+{
+  LR1ItemList *list = a;
+  return list->number;
+}
+
+bool transitionsCompare(void *a, void *b)
+{
+  HashMap *first = a;
+  HashMap *second = b;
+  return first == second;
+}
+
 Parser *createParser(Grammar *grammar, ScannerConfig *config)
 {
   Production *goalProduction = arrayListGet(grammar->productions, 0);
 
   HashMap *sets = createFirstSets(grammar, config);
-  ArrayList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
+  LR1ItemList *cc0 = closure(createLR1Items(goalProduction), grammar, sets);
+  cc0->number = nextItemListNumber();
 
   HashSet *cc = hashSetCreateFull(0, 0.0f, ccCompare, ccHash);
   hashSetPut(cc, cc0);
@@ -522,55 +559,127 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
   Queue *worklist = queueCreate();
   queueEnqueue(worklist, cc0);
 
-  ArrayList *transitions = arrayListCreate(10, sizeof(Transition *));
+  HashMap *transitions = hashMapCreateFull(0, 0.0f, transitionsCompare, transitionsHash);
 
-  ArrayList *itemList = NULL;
+  LR1ItemList *itemList = NULL;
 
-  int c = 0;
   while((itemList = queueDequeue(worklist)) != NULL)
   {
-    c++;
-    if(c==100) break;
     ArrayList *following = getSymbolsFollowingDot(itemList);
 
     for(int i = 0; i < following->used; i++)
     {
       char *symbol = arrayListGet(following, i);
-      ArrayList *temp = goTo(itemList, symbol, grammar, sets);
-      arrayListQSort(temp, itemListCompare);
-      ArrayList *existing = tryGetExistingItemList(cc, temp);
+      LR1ItemList *temp = goTo(itemList, symbol, grammar, sets);
+      arrayListQSort(temp->items, itemListCompare);
+      LR1ItemList *existing = tryGetExistingItemList(cc, temp);
 
       if(existing == NULL)
       {
-        printLR1ItemList(temp);
         hashSetPut(cc, temp);
         queueEnqueue(worklist, temp);
         existing = temp;
+        temp->number = nextItemListNumber();
       }
 
-      Transition *transition = calloc(1, sizeof(Transition));
-      transition->from = itemList;
-      transition->to = existing;
-      transition->symbol = symbol;
-
-      arrayListPush(transitions, transition);
+      HashMap *transitionsForItemList = hashMapGet(transitions, itemList);
+      if(transitionsForItemList == NULL) transitionsForItemList = hashMapCreate();
+      hashMapSet(transitionsForItemList, symbol, existing);
+      hashMapSet(transitions, itemList, transitionsForItemList);
     }
   }
 
-  int i = 0;
+  ParserTable *table = calloc(1, sizeof(ParserTable));
+  table->states = arrayListCreate(cc->count, sizeof(ParseState *));
+
+  int stateNumber = 0;
   hashSetFor(cc, cur)
   {
-    ArrayList *list = hashSetForItem(cur);
-    printf("----CC%i----\n", i++);
-    printLR1ItemList(list);
+    LR1ItemList *list = hashSetForItem(cur);
+
+    ParseState *state = calloc(1, sizeof(ParseState));
+    state->number = stateNumber++;
+    state->actions = arrayListCreate(arrayListCount(list->items), sizeof(Action *));
+    state->gotos = arrayListCreate(arrayListCount(list->items), sizeof(GoTo *));
+
+    for(int i = 0; i < arrayListCount(list->items); i++)
+    {
+      LR1Item *item = arrayListGet(list->items, i);
+      bool isAtEnd = item->dotPosition == arrayListCount(item->rule->symbols);
+
+      if(isAtEnd)
+      {
+        Action *action = calloc(1, sizeof(Action));
+        action->symbol = item->lookahead;
+
+        if(strcmp(item->production, goalProduction->name) == 0 && item->lookahead == END)
+        {
+          action->type = ACCEPT;
+        }
+        else
+        {
+          action->type = REDUCE;
+          action->toProduction = getProductionForSymbol(grammar, item->production);
+        }
+
+        arrayListPush(state->actions, action);
+        continue;
+      }
+
+      char *nextSymbol = getDotSymbol(item);
+      Production *nextProduction = nextSymbol != NULL ? getProductionForSymbol(grammar, nextSymbol) : NULL;
+
+      //nextSymbol is a terminal symbol
+      if(nextProduction == NULL)
+      {
+        HashMap *transitionsForList = hashMapGet(transitions, list);
+        LR1ItemList *toTransition = transitionsForList != NULL ? hashMapGet(transitionsForList, nextSymbol) : NULL;
+
+        if(toTransition != NULL)
+        {
+          Action *shiftAction = calloc(1, sizeof(Action));
+          shiftAction->type = SHIFT;
+          shiftAction->toState = toTransition->number;
+          shiftAction->symbol = nextSymbol;
+          arrayListPush(state->actions, shiftAction);
+        }
+      }
+    }
+
+    HashMap *transitionsForList = hashMapGet(transitions, list);
+
+    for(int i = 0; i < arrayListCount(grammar->productions); i++)
+    {
+      Production *production = arrayListGet(grammar->productions, i);
+      LR1ItemList *nonTerminalTransition = transitionsForList != NULL ? hashMapGet(transitionsForList, production->name) : NULL;
+      if(nonTerminalTransition != NULL)
+      {
+        GoTo *goTo = calloc(1, sizeof(GoTo));
+        goTo->number = nonTerminalTransition->number;
+        arrayListPush(state->gotos, goTo);
+      }
+    }
+
+    arrayListPush(table->states, state);
   }
   hashSetForEnd
 
-  for(int i = 0; i < transitions->used; i++)
+  for(int i = 0; i < arrayListCount(table->states); i++)
   {
-    Transition *transition = arrayListGet(transitions, i);
+    ParseState *state = arrayListGet(table->states, i);
+    printf("%i: ", state->number);
 
-    printf("CC%i -> CC%i on %s\n", transition->from, transition->to, transition->symbol);
+    for(int j = 0; j < arrayListCount(state->actions); j++)
+    {
+      Action *action = arrayListGet(state->actions, j);
+      printf("%s -> ", action->symbol);
+
+      if(action->type == SHIFT) printf("s %i", action->toState);
+      if(action->type == REDUCE) printf("r %s", action->toProduction->name);
+      if(action->type == ACCEPT) printf("acc");
+      printf(",");
+    }
+    printf("\n");
   }
 
   return NULL;
