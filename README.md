@@ -1,6 +1,6 @@
-Scanner in C
+Compiler in C
 ============
 
-A simple scanner implemented in C.
+A simple compiler in C.
 
 In no way production ready.
