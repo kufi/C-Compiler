@@ -8,6 +8,8 @@
 #include "../Util/Collections/Queue.h"
 #include "../Util/Collections/HashSet.h"
 #include "../Util/Collections/HashMap.h"
+#include "../Util/Collections/Stack.h"
+#include "../Util/Collections/LinkedList.h"
 #include "../Scanner/StringBuilder.h"
 
 typedef struct LR1Item {
@@ -380,24 +382,27 @@ LR1ItemList *goTo(LR1ItemList *list, char *symbol, Grammar *grammar, HashMap *fi
   return closure(moved, grammar, firstSets);
 }
 
+void printLR1Item(LR1Item *item)
+{
+  printf("[%s -> ", item->production);
+
+  for(int j = 0; j < arrayListCount(item->rule->symbols); j++)
+  {
+    if(j == item->dotPosition) printf("\u2022");
+    printf("%s ", (char *)arrayListGet(item->rule->symbols, j));
+  }
+
+  if(item->dotPosition == arrayListCount(item->rule->symbols)) printf("\u2022");
+
+  printf(", %s]\n", item->lookahead);
+}
+
 void printLR1ItemList(LR1ItemList *list)
 {
   printf("----CC%i----\n", list->number);
   for(int i = 0; i < arrayListCount(list->items); i++)
   {
-    LR1Item *item = arrayListGet(list->items, i);
-
-    printf("[%s -> ", item->production);
-
-    for(int j = 0; j < arrayListCount(item->rule->symbols); j++)
-    {
-      if(j == item->dotPosition) printf("\u2022");
-      printf("%s ", (char *)arrayListGet(item->rule->symbols, j));
-    }
-
-    if(item->dotPosition == arrayListCount(item->rule->symbols)) printf("\u2022");
-
-    printf(", %s]\n", item->lookahead);
+    printLR1Item(arrayListGet(list->items, i));
   }
 }
 
@@ -507,31 +512,6 @@ int itemListCompare(const void *a, const void *b)
   return strcmp(createStringFromLR1Item(first), createStringFromLR1Item(second));
 }
 
-enum ActionType { SHIFT, REDUCE, ACCEPT };
-
-typedef struct Action {
-  enum ActionType type;
-  char *symbol;
-  union {
-    int toState;
-    Production *toProduction;
-  };
-} Action;
-
-typedef struct GoTo {
-  int number;
-} GoTo;
-
-typedef struct ParseState {
-  int number;
-  ArrayList *actions;
-  ArrayList *gotos;
-} ParseState;
-
-typedef struct ParserTable {
-  ArrayList *states;
-} ParserTable;
-
 static uint32_t transitionsHash(void *a)
 {
   LR1ItemList *list = a;
@@ -545,7 +525,7 @@ bool transitionsCompare(void *a, void *b)
   return first == second;
 }
 
-Parser *createParser(Grammar *grammar, ScannerConfig *config)
+ParserTable *createParser(Grammar *grammar, ScannerConfig *config)
 {
   Production *goalProduction = arrayListGet(grammar->productions, 0);
 
@@ -592,15 +572,15 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
   ParserTable *table = calloc(1, sizeof(ParserTable));
   table->states = arrayListCreate(cc->count, sizeof(ParseState *));
 
-  int stateNumber = 0;
   hashSetFor(cc, cur)
   {
     LR1ItemList *list = hashSetForItem(cur);
+    HashMap *transitionsForList = hashMapGet(transitions, list);
 
     ParseState *state = calloc(1, sizeof(ParseState));
-    state->number = stateNumber++;
-    state->actions = arrayListCreate(arrayListCount(list->items), sizeof(Action *));
-    state->gotos = arrayListCreate(arrayListCount(list->items), sizeof(GoTo *));
+    state->number = list->number;
+    state->actions = hashMapCreate();
+    state->gotos = hashMapCreate();
 
     for(int i = 0; i < arrayListCount(list->items); i++)
     {
@@ -612,7 +592,7 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
         Action *action = calloc(1, sizeof(Action));
         action->symbol = item->lookahead;
 
-        if(strcmp(item->production, goalProduction->name) == 0 && item->lookahead == END)
+        if(strcmp(item->production, goalProduction->name) == 0 && strcmp(item->lookahead, END) == 0)
         {
           action->type = ACCEPT;
         }
@@ -620,9 +600,10 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
         {
           action->type = REDUCE;
           action->toProduction = getProductionForSymbol(grammar, item->production);
+          action->toRule = item->rule;
         }
 
-        arrayListPush(state->actions, action);
+        hashMapSet(state->actions, item->lookahead, action);
         continue;
       }
 
@@ -632,7 +613,6 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
       //nextSymbol is a terminal symbol
       if(nextProduction == NULL)
       {
-        HashMap *transitionsForList = hashMapGet(transitions, list);
         LR1ItemList *toTransition = transitionsForList != NULL ? hashMapGet(transitionsForList, nextSymbol) : NULL;
 
         if(toTransition != NULL)
@@ -641,12 +621,10 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
           shiftAction->type = SHIFT;
           shiftAction->toState = toTransition->number;
           shiftAction->symbol = nextSymbol;
-          arrayListPush(state->actions, shiftAction);
+          hashMapSet(state->actions, nextSymbol, shiftAction);
         }
       }
     }
-
-    HashMap *transitionsForList = hashMapGet(transitions, list);
 
     for(int i = 0; i < arrayListCount(grammar->productions); i++)
     {
@@ -656,31 +634,139 @@ Parser *createParser(Grammar *grammar, ScannerConfig *config)
       {
         GoTo *goTo = calloc(1, sizeof(GoTo));
         goTo->number = nonTerminalTransition->number;
-        arrayListPush(state->gotos, goTo);
+        goTo->production = production;
+        hashMapSet(state->gotos, production->name, goTo);
       }
     }
 
-    arrayListPush(table->states, state);
+    arrayListSet(table->states, state->number, state);
   }
   hashSetForEnd
 
-  for(int i = 0; i < arrayListCount(table->states); i++)
+  return table;
+}
+
+ParseTreeItem *createNonterminalParseTreeItem(Production *production, Rule *rule)
+{
+  ParseTreeItem *item = malloc(sizeof(ParseTreeItem));
+  item->type = NONTERMINAL;
+  item->production = production;
+  item->rule = rule;
+  item->subItems = linkedListCreate();
+  return item;
+}
+
+ParseTreeItem *createTerminalParseTreeItem(Word *word)
+{
+  ParseTreeItem *item = malloc(sizeof(ParseTreeItem));
+  item->type = TERMINAL;
+  item->word = word;
+  return item;
+}
+
+enum ParseStackEntryType { STATE, ITEM };
+
+typedef struct ParseStackEntry {
+  enum ParseStackEntryType type;
+  union {
+    int state;
+    ParseTreeItem *item;
+  };
+} ParseStackEntry;
+
+ParseStackEntry *createStateEntry(int state)
+{
+  ParseStackEntry *entry = malloc(sizeof(ParseStackEntry));
+  entry->type = STATE;
+  entry->state = state;
+  return entry;
+}
+
+ParseStackEntry *createItemEntry(ParseTreeItem *item)
+{
+  ParseStackEntry *entry = malloc(sizeof(ParseStackEntry));
+  entry->type = ITEM;
+  entry->item = item;
+  return entry;
+}
+
+Word createEOF()
+{
+  Category *category = malloc(sizeof(Category));
+  category->name = END;
+  Word word;
+  word.lexeme = END;
+  word.category = category;
+  return word;
+}
+
+ParseTree *runParser(ParserTable *table, ScannerConfig *scannerConfig, char *input)
+{
+  addCategory(scannerConfig, " ", "( |\n)( |\n)*");
+
+  Scanner *scanner = createScanner(scannerConfig, input);
+
+  Stack *parseStack = stackCreate();
+  stackPush(parseStack, createStateEntry(-1));
+  stackPush(parseStack, createStateEntry(0));
+
+  ParseTree *tree = calloc(1, sizeof(ParseTree));
+  tree->success = false;
+
+  Word word = hasMoreWords(scanner) ? nextWord(scanner) : createEOF();
+
+  while(true)
   {
-    ParseState *state = arrayListGet(table->states, i);
-    printf("%i: ", state->number);
-
-    for(int j = 0; j < arrayListCount(state->actions); j++)
+    if(strcmp(word.category->name, " ") == 0)
     {
-      Action *action = arrayListGet(state->actions, j);
-      printf("%s -> ", action->symbol);
-
-      if(action->type == SHIFT) printf("s %i", action->toState);
-      if(action->type == REDUCE) printf("r %s", action->toProduction->name);
-      if(action->type == ACCEPT) printf("acc");
-      printf(",");
+      word = hasMoreWords(scanner) ? nextWord(scanner) : createEOF();
+      continue;
     }
-    printf("\n");
+
+    ParseStackEntry *stackTop = stackPeek(parseStack);
+    ParseState *state = arrayListGet(table->states, stackTop->state);
+    Action *action  = hashMapGet(state->actions, word.category->name);
+
+    if(action == NULL) return tree;
+
+    if(action->type == REDUCE)
+    {
+      Rule *rule = action->toRule;
+      int popCount = arrayListCount(rule->symbols) * 2;
+      ParseTreeItem *item = createNonterminalParseTreeItem(action->toProduction, action->toRule);
+      ParseStackEntry *newEntry = createItemEntry(item);
+
+      for(int i = 0; i < popCount; i++)
+      {
+        ParseStackEntry *entry = stackPop(parseStack);
+        if(entry->type == ITEM) linkedListUnshift(item->subItems, entry->item);
+      }
+
+      stackTop = stackPeek(parseStack);
+      state = arrayListGet(table->states, stackTop->state);
+      stackPush(parseStack, newEntry);
+      GoTo *goTo = hashMapGet(state->gotos, action->toProduction->name);
+      stackPush(parseStack, createStateEntry(goTo->number));
+    }
+    else if(action->type == SHIFT)
+    {
+      Word *heapWord = calloc(1, sizeof(Word));
+      memcpy(heapWord, &word, sizeof(Word));
+      ParseTreeItem *item = createTerminalParseTreeItem(heapWord);
+      stackPush(parseStack, createItemEntry(item));
+      stackPush(parseStack, createStateEntry(action->toState));
+
+      word = hasMoreWords(scanner) ? nextWord(scanner) : createEOF();
+    }
+    else if(action->type == ACCEPT)
+    {
+      stackPop(parseStack);
+      ParseStackEntry *root = stackPop(parseStack);
+      tree->success = true;
+      tree->root = root->item;
+      return tree;
+    }
   }
 
-  return NULL;
+  return tree;
 }

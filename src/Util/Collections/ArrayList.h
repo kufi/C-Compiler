@@ -26,6 +26,7 @@ static inline void *arrayListGet(ArrayList *list, int i)
 
 static inline void arrayListSet(ArrayList *list, int i, void *item)
 {
+  if(list->items[i] == NULL) list->used++;
   list->items[i] = item;
 }
 

@@ -115,15 +115,73 @@ void printGrammar(Grammar *grammar)
   }
 }
 
+void printParseTreeItem(ParseTreeItem *item)
+{
+  if(item->type == TERMINAL)
+  {
+    printf("%i [label=\"%s\"]\n", (int)item, item->word->lexeme);
+  }
+  else if(item->type == NONTERMINAL)
+  {
+    printf("%i [label=\"%s\"]\n", (int)item, item->production->name);
+
+    LIST_FOREACH(item->subItems, cur)
+    {
+      ParseTreeItem *subItem = cur->item;
+      printf("%i -> %i\n", (int)item, (int)subItem);
+
+      printParseTreeItem(subItem);
+    }
+  }
+}
+
+void printParserTable(ParserTable *table)
+{
+  for(int i = 0; i < arrayListCount(table->states); i++)
+  {
+    ParseState *state = arrayListGet(table->states, i);
+    printf("%i: ", state->number);
+
+    hashMapFor(state->actions, cur)
+    {
+      Action *action = hashMapForItem(cur);
+      printf("%s -> ", action->symbol);
+
+      if(action->type == SHIFT) printf("s %i", action->toState);
+      if(action->type == REDUCE) printf("r %s", action->toProduction->name);
+      if(action->type == ACCEPT) printf("acc");
+      printf(",");
+    }
+    hashMapForEnd
+
+    printf(" || ");
+    hashMapFor(state->gotos, cur)
+    {
+      GoTo *goTo = hashMapForItem(cur);
+      printf("%s -> %i, ", goTo->production->name, goTo->number);
+    }
+    hashMapForEnd
+
+    printf("\n");
+  }
+}
+
+void printParseTree(ParseTree *tree)
+{
+  printf("digraph {\n");
+  printParseTreeItem(tree->root);
+  printf("}\n");
+}
+
 int main(int argc, char **argv)
 {
   ScannerConfig *config = createScannerConfig(3);
-  /*addCategory(config, "number", "(-|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*");
+  /*addCategory(config, "num", "(-|1|2|3|4|5|6|7|8|9)(0|1|2|3|4|5|6|7|8|9)*");
+  addCategory(config, "name", "(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)(a|b|c|d|e|f|g|h|i|j|k|l|m|n|o|p|q|r|s|t|u|v|w|x|y|z)*");
   addCategory(config, "*", "\\*");
   addCategory(config, "/", "/");
   addCategory(config, "+", "+");
-  addCategory(config, "-", "-");
-  addCategory(config, " ", "( |\n)( |\n)*");*/
+  addCategory(config, "-", "-");*/
 
   addCategory(config, "(", "\\(");
   addCategory(config, ")", "\\)");
@@ -137,34 +195,27 @@ int main(int argc, char **argv)
   addCategory(config, "(", "\\(");
   addCategory(config, ")", "\\)");*/
 
-  Scanner *scanner = createScanner(config, "(())()(((())))");
-
-  while(hasMoreWords(scanner))
-  {
-    Word word = nextWord(scanner);
-
-    if(word.category == NULL)
-    {
-      printf("Could not get category for input\n");
-      break;
-    }
-
-    printf("'%s' Category: %s\n", word.lexeme, word.category->name);
-  }
-
   Grammar *grammar = createGrammar();
 
   addProduction(grammar, "Goal", "List", END);
   addProduction(grammar, "List", "List Pair", "Pair", END);
-  addProduction(grammar, "Pair", "( Pair )", "( )", END);
-  /*addProduction(grammar, "Expr", "Term Expr2", END);
-  addProduction(grammar, "Expr2", "+ Term Expr2", "- Term Expr2", EMPTY, END);
-  addProduction(grammar, "Term", "Factor Term2", END);
-  addProduction(grammar, "Term2", "* Factor Term2", "/ Factor Term2", EMPTY, END);
+  addProduction(grammar, "Pair", "( List )", "( Pair )", "( )", END);
+
+  /*addProduction(grammar, "Goal", "Expr", END);
+  addProduction(grammar, "Expr", "Expr + Term", "Expr - Term", "Term", END);
+  addProduction(grammar, "Term", "Term * Factor", "Term / Factor", "Factor", END);
   addProduction(grammar, "Factor", "( Expr )", "num", "name", END);*/
+
   printGrammar(grammar);
 
-  createParser(grammar, config);
+  ParserTable *table = createParser(grammar, config);
+  //ParseTree *tree = runParser(table, config, "(1 + 2) * ( 3 + 4)");
+  ParseTree *tree = runParser(table, config, "(()((())()))");
+
+  if(tree->success)
+  {
+    printParseTree(tree);
+  }
 
   return 0;
 }
