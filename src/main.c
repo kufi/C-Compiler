@@ -135,7 +135,7 @@ void printParseTreeItem(ParseTreeItem *item)
   }
 }
 
-void printParserTable(ParserTable *table)
+void printParserTable(ScannerConfig *config, Grammar *grammar, ParserTable *table)
 {
   for(int i = 0; i < arrayListCount(table->states); i++)
   {
@@ -148,7 +148,7 @@ void printParserTable(ParserTable *table)
       printf("%s -> ", action->symbol);
 
       if(action->type == SHIFT) printf("s %i", action->toState);
-      if(action->type == REDUCE) printf("r %s", action->toProduction->name);
+      if(action->type == REDUCE) printf("r %s %i", action->toProduction->name, action->toRule->symbols->used);
       if(action->type == ACCEPT) printf("acc");
       printf(",");
     }
@@ -199,7 +199,7 @@ int main(int argc, char **argv)
 
   addProduction(grammar, "Goal", "List", END);
   addProduction(grammar, "List", "List Pair", "Pair", END);
-  addProduction(grammar, "Pair", "( List )", "( Pair )", "( )", END);
+  addProduction(grammar, "Pair", "( List )", EMPTY, END);
 
   /*addProduction(grammar, "Goal", "Expr", END);
   addProduction(grammar, "Expr", "Expr + Term", "Expr - Term", "Term", END);
@@ -209,12 +209,17 @@ int main(int argc, char **argv)
   printGrammar(grammar);
 
   ParserTable *table = createParser(grammar, config);
+  printParserTable(config, grammar, table);
   //ParseTree *tree = runParser(table, config, "(1 + 2) * ( 3 + 4)");
-  ParseTree *tree = runParser(table, config, "(()((())()))");
+  ParseTree *tree = runParser(table, config, "(()())()");
 
   if(tree->success)
   {
     printParseTree(tree);
+  }
+  else
+  {
+    printf("Could not parse input\n");
   }
 
   return 0;

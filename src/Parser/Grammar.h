@@ -23,4 +23,6 @@ Grammar *createGrammar();
 
 void addProduction(Grammar *grammar, char *name, char *ruleSize, ...);
 
+Production *getProductionForSymbol(Grammar *grammar, char *symbol);
+
 #endif

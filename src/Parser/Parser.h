@@ -5,35 +5,7 @@
 #include <stdbool.h>
 #include "../Scanner/Scanner.h"
 #include "../Util/Collections/HashMap.h"
-
-enum ActionType { SHIFT, REDUCE, ACCEPT };
-
-typedef struct Action {
-  enum ActionType type;
-  char *symbol;
-  union {
-    int toState;
-    struct {
-      Production *toProduction;
-      Rule *toRule;
-    };
-  };
-} Action;
-
-typedef struct GoTo {
-  int number;
-  Production *production;
-} GoTo;
-
-typedef struct ParseState {
-  int number;
-  HashMap *actions;
-  HashMap *gotos;
-} ParseState;
-
-typedef struct ParserTable {
-  ArrayList *states;
-} ParserTable;
+#include "ParserTable.h"
 
 enum ParseTreeItemType { TERMINAL, NONTERMINAL };
 

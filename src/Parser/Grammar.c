@@ -67,3 +67,16 @@ void addProduction(Grammar *grammar, char *name, char *rule, ...)
 
   arrayListPush(grammar->productions, production);
 }
+
+Production *getProductionForSymbol(Grammar *grammar, char *symbol)
+{
+  if(symbol == NULL) return NULL;
+
+  for(int i = 0; i < arrayListCount(grammar->productions); i++)
+  {
+    Production *production = arrayListGet(grammar->productions, i);
+    if(strcmp(production->name, symbol) == 0) return production;
+  }
+
+  return NULL;
+}
