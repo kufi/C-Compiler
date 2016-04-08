@@ -3,9 +3,9 @@
 #define PARSER_HEADER
 
 #include <stdbool.h>
-#include "../Scanner/Scanner.h"
-#include "../Util/Collections/HashMap.h"
-#include "../Util/Collections/ArrayList.h"
+#include "Scanner/Scanner.h"
+#include "Util/Collections/HashMap.h"
+#include "Util/Collections/ArrayList.h"
 #include "ParserTable.h"
 #include "Grammar.h"
 

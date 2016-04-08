@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-#include "../Util/Collections/ArrayList.h"
+#include "Util/Collections/ArrayList.h"
 
 typedef struct Partition {
   int categoryId;

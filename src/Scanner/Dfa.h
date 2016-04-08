@@ -2,7 +2,7 @@
 #define DFA_HEADER
 
 #include "Nfa.h"
-#include "../Util/Collections/ArrayList.h"
+#include "Util/Collections/ArrayList.h"
 
 typedef struct DFATransition {
   char *characters;

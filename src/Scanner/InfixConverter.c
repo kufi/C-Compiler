@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "StringBuilder.h"
-#include "../Util/Collections/Stack.h"
+#include "Util/Collections/Stack.h"
 
 int getOperatorPrecedence(char op)
 {

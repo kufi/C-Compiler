@@ -1,13 +1,13 @@
 #ifndef PRINTER_HEADER
 #define PRINTER_HEADER
 
-#include "../Scanner/Nfa.h"
-#include "../Scanner/Dfa.h"
-#include "../Scanner/Scanner.h"
-#include "../Parser/Grammar.h"
-#include "../Parser/CanonicalCollection.h"
-#include "../Parser/ParserTable.h"
-#include "../Parser/Parser.h"
+#include "Scanner/Nfa.h"
+#include "Scanner/Dfa.h"
+#include "Scanner/Scanner.h"
+#include "Parser/Grammar.h"
+#include "Parser/CanonicalCollection.h"
+#include "Parser/ParserTable.h"
+#include "Parser/Parser.h"
 
 void printNFA(NFA *nfa, int stateSize);
 

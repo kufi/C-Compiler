@@ -2,7 +2,7 @@
 #define SCANNER_HEADER
 
 #include "Dfa.h"
-#include "../Util/Collections/ArrayList.h"
+#include "Util/Collections/ArrayList.h"
 
 typedef struct Category {
   int id;

@@ -2,8 +2,8 @@
 #define FIRSTSET_HEADER
 
 #include "Grammar.h"
-#include  "../Scanner/Scanner.h"
-#include "../Util/Collections/HashMap.h"
+#include  "Scanner/Scanner.h"
+#include "Util/Collections/HashMap.h"
 
 typedef struct FirstSet {
   char *name;

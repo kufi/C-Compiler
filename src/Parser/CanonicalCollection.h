@@ -2,8 +2,8 @@
 #define CANONICALCOLLECTION_HEADER
 
 #include "Grammar.h"
-#include "../Util/Collections/HashMap.h"
-#include "../Util/Collections/HashSet.h"
+#include "Util/Collections/HashMap.h"
+#include "Util/Collections/HashSet.h"
 
 typedef struct LR1Item {
   Rule *rule;

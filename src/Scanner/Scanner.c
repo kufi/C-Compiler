@@ -6,7 +6,7 @@
 #include "SubsetConstruction.h"
 #include "Hopcroft.h"
 #include "StringBuilder.h"
-#include "../Util/Collections/Stack.h"
+#include "Util/Collections/Stack.h"
 
 ScannerConfig *createScannerConfig(int initialSize)
 {

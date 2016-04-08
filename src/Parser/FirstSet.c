@@ -1,5 +1,5 @@
 #include "FirstSet.h"
-#include "../Util/Collections/HashSet.h"
+#include "Util/Collections/HashSet.h"
 
 FirstSet *createFirstSet(char *name)
 {

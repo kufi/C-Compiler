@@ -3,9 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "../Util/Collections/Queue.h"
+#include "Util/Collections/Queue.h"
 #include "FirstSet.h"
-#include "../Scanner/StringBuilder.h"
+#include "Scanner/StringBuilder.h"
 
 LR1Item *createLR1Item(Rule *rule, char *lookahead)
 {
