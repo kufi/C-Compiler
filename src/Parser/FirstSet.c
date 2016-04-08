@@ -75,8 +75,9 @@ void combineSets(FirstSet *first, FirstSet *second)
   }
 }
 
-HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
+HashMap *createFirstSets(Grammar *grammar)
 {
+  ScannerConfig *config = grammar->scannerConfig;
   HashMap *sets = hashMapCreate(10);
 
   FirstSet *empty = createFirstSet(EMPTY);
@@ -95,11 +96,12 @@ HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
     addSet(sets, set);
   }
 
-  for(int i = 0; i < arrayListCount(grammar->productions); i++)
+  hashMapFor(grammar->productions, cur)
   {
-    Production *prod = arrayListGet(grammar->productions, i);
-    addSet(sets, createFirstSet(prod->name));
+    char *productionName = hashMapForKey(cur);
+    addSet(sets, createFirstSet(productionName));
   }
+  hashMapForEnd
 
   bool changing;
 
@@ -107,15 +109,14 @@ HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
   {
     changing = false;
 
-    for(int i = 0; i < arrayListCount(grammar->productions); i++)
+    hashMapFor(grammar->productions, cur)
     {
-      Production *prod = arrayListGet(grammar->productions, i);
+      ArrayList *rules = hashMapForItem(cur);
+      FirstSet *prodSet = findSet(sets, hashMapForKey(cur));
 
-      FirstSet *prodSet = findSet(sets, prod->name);
-
-      for(int j = 0; j < arrayListCount(prod->rules); j++)
+      for(int j = 0; j < arrayListCount(rules); j++)
       {
-        Rule *rule = arrayListGet(prod->rules, j);
+        Rule *rule = arrayListGet(rules, j);
 
         FirstSet *rhs = copySet(findSet(sets, arrayListGet(rule->symbols, 0)));
         bool containsEmpty = setContainsEmpty(rhs);
@@ -143,6 +144,7 @@ HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config)
         changing |= oldSize != arrayListCount(prodSet->terminals);
       }
     }
+    hashMapForEnd
   } while(changing);
 
   return sets;

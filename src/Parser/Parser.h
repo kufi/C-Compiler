@@ -5,22 +5,30 @@
 #include <stdbool.h>
 #include "../Scanner/Scanner.h"
 #include "../Util/Collections/HashMap.h"
+#include "../Util/Collections/ArrayList.h"
 #include "ParserTable.h"
+#include "Grammar.h"
 
 enum ParseTreeItemType { TERMINAL, NONTERMINAL };
+
+typedef struct ASTNode {
+  Rule *rule;
+  ArrayList *subNodes;
+  Word *word;
+} ASTNode;
 
 typedef struct ParseTreeItem {
   enum ParseTreeItemType type;
   union {
       struct {
-        Production *production;
         Rule *rule;
-        LinkedList *subItems;
+        ArrayList *subItems;
       };
       struct {
         Word *word;
       };
   };
+  ASTNode *astNode;
 } ParseTreeItem;
 
 typedef struct ParseTree {
@@ -28,8 +36,17 @@ typedef struct ParseTree {
   ParseTreeItem *root;
 } ParseTree;
 
-ParserTable *createParser(Grammar *grammar, ScannerConfig *config);
+static inline ParseTreeItem *parseTreeSubItem(ParseTreeItem *item, int index)
+{
+  return (ParseTreeItem *)arrayListGet(item->subItems, index);
+}
 
-ParseTree *runParser(ParserTable *table, ScannerConfig *scannerConfig, char *input);
+ParserTable *createParser(Grammar *grammar, char *goalProduction);
+
+ASTNode *createASTNode(Rule *rule, Word *word);
+
+void addSubNode(ASTNode *node, ASTNode *subNode);
+
+ParseTree *runParser(ParserTable *table, char *input);
 
 #endif

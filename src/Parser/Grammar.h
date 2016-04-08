@@ -1,28 +1,33 @@
 #ifndef GRAMMAR_HEADER
 #define GRAMMAR_HEADER
 
-#include "../Util/Collections/ArrayList.h"
+#include "Util/Collections/HashMap.h"
+#include "Util/Collections/ArrayList.h"
+#include "Scanner/Scanner.h"
 
 extern char *END;
 extern char *EMPTY;
 
+struct ParseTreeItem;
+struct ASTNode;
+
+typedef struct ASTNode *(*ReduceAction)(struct ParseTreeItem *parseTreeItem);
+
 typedef struct Rule {
+  char *productionName;
   ArrayList *symbols;
+  ReduceAction reduceAction;
 } Rule;
 
-typedef struct Production {
-  char *name;
-  ArrayList *rules;
-} Production;
-
 typedef struct Grammar {
-  ArrayList *productions;
+  HashMap *productions;
+  ScannerConfig *scannerConfig;
 } Grammar;
 
-Grammar *createGrammar();
+Grammar *createGrammar(ScannerConfig *config);
 
-void addProduction(Grammar *grammar, char *name, char *ruleSize, ...);
+void addProduction(Grammar *grammar, char *name, char *rule, ReduceAction reduceAction);
 
-Production *getProductionForSymbol(Grammar *grammar, char *symbol);
+ArrayList *getProductionForSymbol(Grammar *grammar, char *symbol);
 
 #endif

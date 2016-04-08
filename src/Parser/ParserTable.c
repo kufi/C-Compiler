@@ -14,41 +14,41 @@ void addActionToState(ParseState *state, char *symbol, Action *action)
   }
 }
 
-GoTo *createGoto(int number, Production *production)
+GoTo *createGoto(int number, char *productionName)
 {
   GoTo *goTo = calloc(1, sizeof(GoTo));
   goTo->number = number;
-  goTo->production = production;
+  goTo->productionName = productionName;
   return goTo;
 }
 
 void buildGotoTable(ParseState *state, Grammar *grammar, HashMap *transitionsForList)
 {
-  for(int i = 0; i < arrayListCount(grammar->productions); i++)
+  hashMapFor(grammar->productions, production)
   {
-    Production *production = arrayListGet(grammar->productions, i);
-    LR1ItemList *nonTerminalTransition = transitionsForList != NULL ? hashMapGet(transitionsForList, production->name) : NULL;
+    char *productionName = hashMapForKey(production);
+    LR1ItemList *nonTerminalTransition = transitionsForList != NULL ? hashMapGet(transitionsForList, productionName) : NULL;
 
     if(nonTerminalTransition != NULL)
     {
-      hashMapSet(state->gotos, production->name, createGoto(nonTerminalTransition->number, production));
+      hashMapSet(state->gotos, productionName, createGoto(nonTerminalTransition->number, productionName));
     }
   }
+  hashMapForEnd
 }
 
-Action *createReduceAcceptAction(LR1Item *item, Production *goalProduction)
+Action *createReduceAcceptAction(LR1Item *item, char *goalProduction)
 {
   Action *action = calloc(1, sizeof(Action));
   action->symbol = item->lookahead;
 
-  if(item->production == goalProduction && strcmp(item->lookahead, END) == 0)
+  if(strcmp(item->rule->productionName, goalProduction) == 0 && strcmp(item->lookahead, END) == 0)
   {
     action->type = ACCEPT;
   }
   else
   {
     action->type = REDUCE;
-    action->toProduction = item->production;
     action->toRule = item->rule;
   }
 
@@ -64,7 +64,7 @@ Action *createShiftAction(LR1ItemList *transition, char *symbol)
   return shiftAction;
 }
 
-void buildActionTable(ParseState *state, Grammar *grammar, LR1ItemList *list, HashMap *transitionsForList, Production *goalProduction)
+void buildActionTable(ParseState *state, Grammar *grammar, LR1ItemList *list, HashMap *transitionsForList, char *goalProduction)
 {
   for(int i = 0; i < arrayListCount(list->items); i++)
   {
@@ -81,7 +81,7 @@ void buildActionTable(ParseState *state, Grammar *grammar, LR1ItemList *list, Ha
     }
 
     char *nextSymbol = getDotSymbol(item);
-    Production *nextProduction = nextSymbol != NULL ? getProductionForSymbol(grammar, nextSymbol) : NULL;
+    ArrayList *nextProduction = nextSymbol != NULL ? getProductionForSymbol(grammar, nextSymbol) : NULL;
 
     //nextSymbol is a terminal symbol
     if(nextProduction == NULL)
@@ -101,10 +101,11 @@ ParseState *createParseState(int number)
   return state;
 }
 
-ParserTable *createParserTable(CC *cc, Grammar *grammar, Production *goalProduction)
+ParserTable *createParserTable(CC *cc, Grammar *grammar, char *goalProduction)
 {
   ParserTable *table = calloc(1, sizeof(ParserTable));
   table->states = arrayListCreate(cc->itemLists->count, sizeof(ParseState *));
+  table->grammar = grammar;
 
   hashSetFor(cc->itemLists, cur)
   {

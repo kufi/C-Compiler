@@ -10,16 +10,13 @@ typedef struct Action {
   char *symbol;
   union {
     int toState;
-    struct {
-      Production *toProduction;
-      Rule *toRule;
-    };
+    Rule *toRule;
   };
 } Action;
 
 typedef struct GoTo {
   int number;
-  Production *production;
+  char *productionName;
 } GoTo;
 
 typedef struct ParseState {
@@ -30,8 +27,9 @@ typedef struct ParseState {
 
 typedef struct ParserTable {
   ArrayList *states;
+  Grammar *grammar;
 } ParserTable;
 
-ParserTable *createParserTable(CC *cc, Grammar *grammar, Production *goalProduction);
+ParserTable *createParserTable(CC *cc, Grammar *grammar, char *goalProduction);
 
 #endif

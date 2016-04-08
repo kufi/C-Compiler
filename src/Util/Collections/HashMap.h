@@ -38,6 +38,11 @@ static inline void *hashMapForItem(LinkedListNode *node)
   return ((HashMapNode *)node->item)->data;
 }
 
+static inline void *hashMapForKey(LinkedListNode *node)
+{
+  return ((HashMapNode *)node->item)->key;
+}
+
 HashMap *hashMapCreate();
 
 HashMap *hashMapCreateCap(int capacity);

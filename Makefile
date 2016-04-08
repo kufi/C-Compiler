@@ -17,8 +17,8 @@ OBJEXT      := o
 #Flags, Libraries and Includes
 CFLAGS      := -Wall -std=gnu99 -g
 LIB         :=
-INC         := -I$(INCDIR) -I/usr/local/include
-INCDEP      := -I$(INCDIR)
+INC         := -I$(INCDIR) -I$(SRCDIR)
+INCDEP      := -I$(INCDIR) -I$(SRCDIR)
 
 #---------------------------------------------------------------------------------
 #DO NOT EDIT BELOW THIS LINE

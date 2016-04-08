@@ -7,10 +7,11 @@
 char *END = "END";
 char *EMPTY = "EMPTY";
 
-Grammar *createGrammar()
+Grammar *createGrammar(ScannerConfig *config)
 {
   Grammar *grammar = malloc(sizeof(Grammar));
-  grammar->productions = arrayListCreate(10, sizeof(Production *));
+  grammar->productions = hashMapCreate();
+  grammar->scannerConfig = config;
   return grammar;
 }
 
@@ -19,9 +20,11 @@ void appendSymbol(Rule *rule, char *symbol)
   arrayListPush(rule->symbols, symbol);
 }
 
-void addRule(Production *production, char *ruleString)
+void addRule(ArrayList *productionRules, char *productionName, char *ruleString, ReduceAction reduceAction)
 {
   Rule *rule = malloc(sizeof(Rule));
+  rule->productionName = productionName;
+  rule->reduceAction = reduceAction;
 
   if(ruleString == EMPTY)
   {
@@ -42,41 +45,24 @@ void addRule(Production *production, char *ruleString)
     }
   }
 
-  arrayListPush(production->rules, rule);
+  arrayListPush(productionRules, rule);
 }
 
-void addProduction(Grammar *grammar, char *name, char *rule, ...)
+void addProduction(Grammar *grammar, char *name, char *rule, ReduceAction reduceAction)
 {
-  Production *production = malloc(sizeof(Production));
-  production->rules = arrayListCreate(10, sizeof(Rule));
+  ArrayList *productionRules = hashMapGet(grammar->productions, name);
 
-  production->name = name;
-
-  char *ruleString = rule;
-  if(ruleString != END) addRule(production, rule);
-
-  va_list rules;
-  va_start(rules, rule);
-
-  while((ruleString = va_arg(rules, char *)) != END)
+  if(productionRules == NULL)
   {
-    addRule(production, ruleString);
+    productionRules = arrayListCreate(10, sizeof(Rule *));
+    hashMapSet(grammar->productions, name, productionRules);
   }
 
-  va_end(rules);
-
-  arrayListPush(grammar->productions, production);
+  addRule(productionRules, name, rule, reduceAction);
 }
 
-Production *getProductionForSymbol(Grammar *grammar, char *symbol)
+ArrayList *getProductionForSymbol(Grammar *grammar, char *symbol)
 {
   if(symbol == NULL) return NULL;
-
-  for(int i = 0; i < arrayListCount(grammar->productions); i++)
-  {
-    Production *production = arrayListGet(grammar->productions, i);
-    if(strcmp(production->name, symbol) == 0) return production;
-  }
-
-  return NULL;
+  return hashMapGet(grammar->productions, symbol);
 }

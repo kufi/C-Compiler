@@ -10,7 +10,7 @@ typedef struct FirstSet {
   ArrayList *terminals;
 } FirstSet;
 
-HashMap *createFirstSets(Grammar *grammar, ScannerConfig *config);
+HashMap *createFirstSets(Grammar *grammar);
 
 FirstSet *getFirstSetForLookaheads(char **lookaheads, int lookaheadSize, HashMap *sets);
 

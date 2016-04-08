@@ -6,7 +6,6 @@
 #include "../Util/Collections/HashSet.h"
 
 typedef struct LR1Item {
-  Production *production;
   Rule *rule;
   int dotPosition;
   char *lookahead;
@@ -24,6 +23,6 @@ typedef struct CC {
 
 char *getDotSymbol(LR1Item *item);
 
-CC *buildCanonicalCollection(HashMap *sets, Grammar *grammar, Production *goalProduction);
+CC *buildCanonicalCollection(HashMap *sets, Grammar *grammar, char *goalProduction);
 
 #endif
