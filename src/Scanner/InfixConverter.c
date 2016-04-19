@@ -24,6 +24,7 @@ void addToOutput(StringBuilder *output, char c)
 
 char *infixToPostfix(char *regex)
 {
+  printf("%s\n", regex);
   Stack *state = stackCreate();
   StringBuilder output = createStringBuilder();
 
@@ -42,6 +43,31 @@ char *infixToPostfix(char *regex)
     {
       addToOutput(&output, '\\');
       addToOutput(&output, c);
+    }
+    else if(c == '[')
+    {
+      while(c != ']')
+      {
+        char next  = regex[i + 1];
+
+        if(next == '-')
+        {
+          char end = regex[i + 2];
+
+          for(int j = 0; j <= (int)end - (int)c; j++)
+          {
+            addToOutput(&output, (char)((int)c + j));
+          }
+          for(int j = 0; j < (int)end - (int)c; j++)
+          {
+            addToOutput(&output, '|');
+          }
+        }
+
+        i++;
+        c = next;
+        next = regex[i + 1];
+      }
     }
     else if(c == '|' || c == '*')
     {
@@ -86,5 +112,6 @@ char *infixToPostfix(char *regex)
   while(state->count > 0) addToOutput(&output, *(char *)stackPop(state));
 
   addToOutput(&output, '\0');
+  printf("Output: %s\n", output.string);
   return output.string;
 }

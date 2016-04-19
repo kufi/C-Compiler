@@ -7,6 +7,7 @@
 #include "Hopcroft.h"
 #include "StringBuilder.h"
 #include "Util/Collections/Stack.h"
+#include "Debug/Printer.h"
 
 ScannerConfig *createScannerConfig(int initialSize)
 {
@@ -57,6 +58,7 @@ Scanner *createScanner(ScannerConfig *config, char *text)
 {
   Scanner *scanner = malloc(sizeof(Scanner));
   DFA *dfa = hopcroft(subsetConstruction(config->nfa, asciiCharset()));
+  printDFA(dfa);
   scanner->dfa = dfa;
   scanner->text = text;
   scanner->config = config;

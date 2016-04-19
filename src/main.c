@@ -7,7 +7,7 @@
 int main(int argc, char **argv)
 {
   ParserTable *table = createCalculatorParser();
-  ParseTree *tree = runParser(table, "(1+2)*(3+(3-b)+3/4)");
+  ParseTree *tree = runParser(table, "(43+5402)*(313+(32-b)+3/-433)");
 
   //ParseTree *tree = runParser(table, config, "(()())()");
 

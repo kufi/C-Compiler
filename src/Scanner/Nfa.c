@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "InfixConverter.h"
 #include "Nfa.h"
+#include "Debug/Printer.h"
 
 NFAState *createState(int id, NFAState *out1, char outChar1, NFAState *out2, char outChar2)
 {
@@ -27,6 +28,14 @@ NFA *createNFA(NFAState *start, NFAState *final)
   nfa->final->accepting = true;
 
   return nfa;
+}
+
+NFA *deepCopyNFA(NFA *nfa)
+{
+  NFAState *newStart;
+  NFAState *newEnd;
+  deepCopyNFAStates(nfa->start, nfa->end->id + 1, &newStart, &newEnd);
+  return createNFA(newStart, newEnd);
 }
 
 NFA *buildNFA(int startId, char *regex)
