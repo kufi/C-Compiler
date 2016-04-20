@@ -4,6 +4,8 @@
 #include "InfixConverter.h"
 #include "Nfa.h"
 #include "Debug/Printer.h"
+#include "Util/Collections/HashMap.h"
+#include "Util/Collections/Stack.h"
 
 NFAState *createState(int id, NFAState *out1, char outChar1, NFAState *out2, char outChar2)
 {
@@ -30,20 +32,91 @@ NFA *createNFA(NFAState *start, NFAState *final)
   return nfa;
 }
 
-NFA *deepCopyNFA(NFA *nfa)
+NFAState *deepCopyNFAState(NFAState *state, int *id, int startStateId, int endStateId, NFAState **newStart, NFAState **newEnd, HashMap *existingStates)
+{
+  if(state == NULL) return NULL;
+
+  NFAState *existingState = hashMapGet(existingStates, &(state->id));
+  if(existingState != NULL) return existingState;
+
+  NFAState *newState = createState(
+    (*id)++,
+    NULL,
+    state->outChar1,
+    NULL,
+    state->outChar2
+  );
+
+  hashMapSet(existingStates, &(state->id), newState);
+
+  newState->out1 = deepCopyNFAState(state->out1, id, startStateId, endStateId, newStart, newEnd, existingStates);
+  newState->out2 = deepCopyNFAState(state->out2, id, startStateId, endStateId, newStart, newEnd, existingStates);
+
+  if(state->id == startStateId) *newStart = newState;
+  if(state->id == endStateId) *newEnd = newState;
+
+  return newState;
+}
+
+static uint32_t intHash(void *a)
+{
+  int *key = a;
+  return *key;
+}
+
+static bool intCompare(void *a, void *b)
+{
+  int *first = a;
+  int *second = b;
+  return *first == *second;
+}
+
+NFA *deepCopyNFA(NFA *nfa, int *id)
 {
   NFAState *newStart;
   NFAState *newEnd;
-  deepCopyNFAStates(nfa->start, nfa->end->id + 1, &newStart, &newEnd);
+  int startStateId = nfa->start->id;
+  int endStateId = nfa->final->id;
+  HashMap *copiedStates = hashMapCreateFull(16, 0.75f, intCompare, intHash);
+
+  deepCopyNFAState(nfa->start, id, startStateId, endStateId, &newStart, &newEnd, copiedStates);
+  newEnd->id = (*id)++;
+
   return createNFA(newStart, newEnd);
+}
+
+NFA *createKleene(NFA *nfa, int stateId1, int stateId2)
+{
+  nfa->final->accepting = false;
+
+  NFAState *start = createState(stateId1, nfa->start, '\0', NULL, '\0');
+  NFAState *end = createState(stateId2, NULL, '\0', NULL, '\0');
+  start->out2 = end;
+
+  nfa->final->outChar1 = '\0';
+  nfa->final->out1 = end;
+  nfa->final->outChar2 = '\0';
+  nfa->final->out2 = nfa->start;
+
+  return createNFA(start, end);
+}
+
+NFA *concat(NFA *nfa1, NFA *nfa2)
+{
+  nfa1->final->accepting = false;
+  nfa2->final->accepting = false;
+
+  nfa1->final->outChar1 = '\0';
+  nfa1->final->out1 = nfa2->start;
+
+  return createNFA(nfa1->start, nfa2->final);
 }
 
 NFA *buildNFA(int startId, char *regex)
 {
   char *postfix = infixToPostfix(regex);
 
-  struct NFA **nfaStack = malloc(sizeof(postfix)/sizeof(postfix[0]) * sizeof(NFA));
-  int nfaPosition = 0;
+  Stack *nfaStack = stackCreate();
   int stateId = startId;
 
   for(int i = 0; postfix[i] != '\0'; i++)
@@ -59,8 +132,8 @@ NFA *buildNFA(int startId, char *regex)
 
     if(c == '|' && !escaped)
     {
-      NFA *nfa1 = nfaStack[--nfaPosition];
-      NFA *nfa2 = nfaStack[--nfaPosition];
+      NFA *nfa1 = stackPop(nfaStack);
+      NFA *nfa2 = stackPop(nfaStack);
 
       nfa1->final->accepting = false;
       nfa2->final->accepting = false;
@@ -76,37 +149,29 @@ NFA *buildNFA(int startId, char *regex)
 
       NFA *alternationNFA = createNFA(start, end);
 
-      nfaStack[nfaPosition++] = alternationNFA;
+      stackPush(nfaStack, alternationNFA);
+    }
+    else if(c == '+' && !escaped)
+    {
+      NFA *nfa = stackPop(nfaStack);
+      NFA *nfaCopy = deepCopyNFA(nfa, &stateId);
+      int firstId = stateId++;
+      int secondId = stateId++;
+      NFA *kleene = createKleene(nfaCopy, firstId, secondId);
+      stackPush(nfaStack, concat(nfa, kleene));
     }
     else if(c == '*' && !escaped)
     {
-      NFA *nfa = nfaStack[--nfaPosition];
-
-      nfa->final->accepting = false;
-
-      NFAState *start = createState(stateId++, nfa->start, '\0', NULL, '\0');
-      NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
-      start->out2 = end;
-
-      nfa->final->outChar1 = '\0';
-      nfa->final->out1 = end;
-      nfa->final->outChar2 = '\0';
-      nfa->final->out2 = nfa->start;
-
-      nfaStack[nfaPosition++] = createNFA(start, end);
+      NFA *nfa = stackPop(nfaStack);
+      int firstId = stateId++;
+      int secondId = stateId++;
+      stackPush(nfaStack, createKleene(nfa, firstId, secondId));
     }
     else if(c == '.' && !escaped)
     {
-      NFA *nfa2 = nfaStack[--nfaPosition];
-      NFA *nfa1 = nfaStack[--nfaPosition];
-
-      nfa1->final->accepting = false;
-      nfa2->final->accepting = false;
-
-      nfa1->final->outChar1 = '\0';
-      nfa1->final->out1 = nfa2->start;
-
-      nfaStack[nfaPosition++] = createNFA(nfa1->start, nfa2->final);
+      NFA *nfa2 = stackPop(nfaStack);
+      NFA *nfa1 = stackPop(nfaStack);
+      stackPush(nfaStack, concat(nfa1, nfa2));
     }
     else
     {
@@ -114,9 +179,9 @@ NFA *buildNFA(int startId, char *regex)
       NFAState *end = createState(stateId++, NULL, '\0', NULL, '\0');
       start->out1 = end;
 
-      nfaStack[nfaPosition++] = createNFA(start, end);
+      stackPush(nfaStack, createNFA(start, end));
     }
   }
 
-  return nfaStack[0];
+  return stackPop(nfaStack);
 }

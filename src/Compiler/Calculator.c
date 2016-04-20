@@ -8,10 +8,10 @@ ScannerConfig *createCalculatorScanner()
 {
   ScannerConfig *config = createScannerConfig(3);
   addCategory(config, "num", "(-[0-9]+)|([1-9]|[0-9]*)");
-  addCategory(config, "name", "[a-z]+");
+  addCategory(config, "name", "[a-z][a-z0-9]*");
   addCategory(config, "*", "\\*");
   addCategory(config, "/", "/");
-  addCategory(config, "+", "+");
+  addCategory(config, "+", "\\+");
   addCategory(config, "-", "-");
   addCategory(config, "(", "\\(");
   addCategory(config, ")", "\\)");

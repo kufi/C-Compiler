@@ -8,6 +8,7 @@ int getOperatorPrecedence(char op)
 {
   switch(op)
   {
+    case '+': return 3; break;
     case '*': return 3; break;
     case '|': return 1; break;
     case '.': return 2; break;
@@ -24,7 +25,6 @@ void addToOutput(StringBuilder *output, char c)
 
 char *infixToPostfix(char *regex)
 {
-  printf("%s\n", regex);
   Stack *state = stackCreate();
   StringBuilder output = createStringBuilder();
 
@@ -46,6 +46,8 @@ char *infixToPostfix(char *regex)
     }
     else if(c == '[')
     {
+      bool first = true;
+
       while(c != ']')
       {
         char next  = regex[i + 1];
@@ -62,6 +64,15 @@ char *infixToPostfix(char *regex)
           {
             addToOutput(&output, '|');
           }
+
+          if(!first)
+          {
+            addToOutput(&output, '|');
+          }
+          else
+          {
+            first = false;
+          }
         }
 
         i++;
@@ -69,7 +80,7 @@ char *infixToPostfix(char *regex)
         next = regex[i + 1];
       }
     }
-    else if(c == '|' || c == '*')
+    else if(c == '|' || c == '*' || c == '+')
     {
       while(state->count > 0 && getOperatorPrecedence(*(char *)stackPeek(state)) > getOperatorPrecedence(c))
       {
@@ -97,13 +108,13 @@ char *infixToPostfix(char *regex)
     }
 
     char nextC = regex[i + 1];
-    if(c != '|' && c != ')' && c != '(' && nextC != '|' && nextC != ')' && nextC != '*' && nextC != '\0')
+    if(c != '|' && c != ')' && c != '(' && nextC != '|' && nextC != ')' && nextC != '*' && nextC != '+' && nextC != '\0')
     {
-      if(c == '*') addToOutput(&output, *(char *)stackPop(state));
+      if(c == '*' || c == '+') addToOutput(&output, *(char *)stackPop(state));
 
       stackPush(state, ".");
     }
-    else if(c == ')' && nextC != ')' && nextC != '*' && nextC != '|' && nextC != '\0')
+    else if(c == ')' && nextC != ')' && nextC != '*' && nextC != '+' && nextC != '|' && nextC != '\0')
     {
       stackPush(state, ".");
     }
@@ -112,6 +123,6 @@ char *infixToPostfix(char *regex)
   while(state->count > 0) addToOutput(&output, *(char *)stackPop(state));
 
   addToOutput(&output, '\0');
-  printf("Output: %s\n", output.string);
+  printf("%s\n", output.string);
   return output.string;
 }
