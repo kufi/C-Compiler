@@ -123,6 +123,5 @@ char *infixToPostfix(char *regex)
   while(state->count > 0) addToOutput(&output, *(char *)stackPop(state));
 
   addToOutput(&output, '\0');
-  printf("%s\n", output.string);
   return output.string;
 }

@@ -5,7 +5,7 @@
 #include "Parser/Parser.h"
 
 
-ASTNode *emptyReduce(ParseTreeItem *parseTreeItem)
+ASTNode *bracesEmptyReduce(ParseTreeItem *parseTreeItem)
 {
   return NULL;
 }
@@ -44,7 +44,7 @@ ParserTable *createBracesParser()
   addProduction(grammar, "List", "List Pair", listPairReduce);
   addProduction(grammar, "List", "Pair", NULL);
   addProduction(grammar, "Pair", "( List )", pairReduce);
-  addProduction(grammar, "Pair", EMPTY, emptyReduce);
+  addProduction(grammar, "Pair", EMPTY, bracesEmptyReduce);
 
   return createParser(grammar, "Goal");
 }

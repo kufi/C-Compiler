@@ -98,7 +98,7 @@ void addSubNode(ASTNode *node, ASTNode *subNode)
 ParseTree *runParser(ParserTable *table, char *input)
 {
   ScannerConfig *scannerConfig = table->grammar->scannerConfig;
-  addCategory(scannerConfig, "insignificantWhitespace", "( |\n)( |\n)*");
+  addCategory(scannerConfig, "insignificantWhitespace", "( |\n)+");
 
   Scanner *scanner = createScanner(scannerConfig, input);
 
@@ -110,6 +110,8 @@ ParseTree *runParser(ParserTable *table, char *input)
   tree->success = false;
 
   Word word = hasMoreWords(scanner) ? nextWord(scanner) : createEOF();
+
+  printParserTable(table->grammar->scannerConfig, table->grammar, table);
 
   while(true)
   {

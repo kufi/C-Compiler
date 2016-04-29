@@ -58,7 +58,6 @@ Scanner *createScanner(ScannerConfig *config, char *text)
 {
   Scanner *scanner = malloc(sizeof(Scanner));
   DFA *dfa = hopcroft(subsetConstruction(config->nfa, asciiCharset()));
-  printDFA(dfa);
   scanner->dfa = dfa;
   scanner->text = text;
   scanner->config = config;
