@@ -111,8 +111,6 @@ ParseTree *runParser(ParserTable *table, char *input)
 
   Word word = hasMoreWords(scanner) ? nextWord(scanner) : createEOF();
 
-  printParserTable(table->grammar->scannerConfig, table->grammar, table);
-
   while(true)
   {
     //ignore whitespace

@@ -18,7 +18,6 @@ int main(int argc, char **argv)
 
   if(tree != NULL && tree->success)
   {
-    printParseTree(tree);
     printAST(tree);
   }
   else

@@ -10,6 +10,7 @@ ScannerConfig *createLangScanner()
   addCategory(config, "val", "val");
   addCategory(config, "var", "var");
   addCategory(config, "def", "def");
+  addCategory(config, "return", "return");
   addCategory(config, "string", "\"([a-zA-Z0-9]| |_|-)*\"");
   addCategory(config, "identifier", "[a-zA-Z][a-zA-Z0-9]*");
   addCategory(config, "integer", "(-[0-9]|[0-9])[0-9]*");
@@ -24,6 +25,7 @@ ScannerConfig *createLangScanner()
   addCategory(config, ")", "\\)");
   addCategory(config, "{", "{");
   addCategory(config, "}", "}");
+  addCategory(config, "comp", "<|>|<=|>=|==");
   return config;
 }
 
@@ -119,6 +121,28 @@ ASTNode *expression1Reduce(ParseTreeItem *item)
   return node;
 }
 
+ASTNode *functionCallReduce(ParseTreeItem *item)
+{
+  ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 0)->word);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  return node;
+}
+
+ASTNode *returnReduce(ParseTreeItem *item)
+{
+  ASTNode *node = createASTNode(item->rule, NULL);
+  addSubNode(node, parseTreeSubItem(item, 1)->astNode);
+  return node;
+}
+
+ASTNode *comparisonReduce(ParseTreeItem *item)
+{
+  ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 1)->word);
+  addSubNode(node, parseTreeSubItem(item, 0)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  return node;
+}
+
 ParserTable *createLangParser()
 {
   ScannerConfig *config = createLangScanner();
@@ -137,14 +161,20 @@ ParserTable *createLangParser()
   addProduction(grammar, "Value", "integer", NULL);
   addProduction(grammar, "Value", "Calculation", NULL);
   addProduction(grammar, "Value", "string", NULL);
+  addProduction(grammar, "Value", "FunctionCall", NULL);
+  addProduction(grammar, "Value", "Comparison", NULL);
   addProduction(grammar, "Function", "def identifier ( FunctionParameters ) { Expressions }", functionReduce);
-  addProduction(grammar, "FunctionParameters", "FunctionParameters , identifier", functionParametersReduce);
-  addProduction(grammar, "FunctionParameters", "identifier", singleFunctionParametersReduce);
+  addProduction(grammar, "FunctionParameters", "FunctionParameters , Value", functionParametersReduce);
+  addProduction(grammar, "FunctionParameters", "Value", singleFunctionParametersReduce);
   addProduction(grammar, "FunctionParameters", EMPTY, emptyReduce);
+  addProduction(grammar, "FunctionCall", "identifier ( FunctionParameters )", functionCallReduce);
   addProduction(grammar, "Expressions", "Expressions Expression", expressionsReduce);
   addProduction(grammar, "Expressions", "Expression", singleExpressionsReduce);
   addProduction(grammar, "Expression", "DeclareVariable", expression1Reduce);
   addProduction(grammar, "Expression", "Assignment ;", expression1Reduce);
+  addProduction(grammar, "Expression", "Value ;", expression1Reduce);
+  addProduction(grammar, "Expression", "Return ;", expression1Reduce);
+  addProduction(grammar, "Return", "return Value", returnReduce);
   addProduction(grammar, "Expression", EMPTY, emptyReduce);
   addProduction(grammar, "Calculation", "Calculation + Term", calculationReduce);
   addProduction(grammar, "Calculation", "Calculation - Term", calculationReduce);
@@ -153,8 +183,9 @@ ParserTable *createLangParser()
   addProduction(grammar, "Term", "Term / Factor", calculationReduce);
   addProduction(grammar, "Term", "Factor", NULL);
   addProduction(grammar, "Factor", "( Calculation )", bracesReduce);
-  addProduction(grammar, "Factor", "integer", NULL);
   addProduction(grammar, "Factor", "identifier", NULL);
+  addProduction(grammar, "Factor", "integer", NULL);
+  addProduction(grammar, "Comparison", "Value comp Value", comparisonReduce);
 
   return createParser(grammar, "Goal");
 }
