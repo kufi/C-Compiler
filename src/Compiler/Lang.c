@@ -11,6 +11,9 @@ ScannerConfig *createLangScanner()
   addCategory(config, "var", "var");
   addCategory(config, "def", "def");
   addCategory(config, "return", "return");
+  addCategory(config, "if", "if");
+  addCategory(config, "while", "while");
+  addCategory(config, "else", "else");
   addCategory(config, "string", "\"([a-zA-Z0-9]| |_|-)*\"");
   addCategory(config, "identifier", "[a-zA-Z][a-zA-Z0-9]*");
   addCategory(config, "integer", "(-[0-9]|[0-9])[0-9]*");
@@ -25,6 +28,7 @@ ScannerConfig *createLangScanner()
   addCategory(config, ")", "\\)");
   addCategory(config, "{", "{");
   addCategory(config, "}", "}");
+  addCategory(config, ":", ":");
   addCategory(config, "comp", "<|>|<=|>=|==");
   return config;
 }
@@ -68,6 +72,16 @@ ASTNode *variableAssignmentReduce(ParseTreeItem *item)
 {
   ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 0)->word);
   addSubNode(node, parseTreeSubItem(item, 1)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  return node;
+}
+
+ASTNode *variableInitAssignmentReduce(ParseTreeItem *item)
+{
+  ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 0)->word);
+  addSubNode(node, parseTreeSubItem(item, 1)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 3)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 5)->astNode);
   return node;
 }
 
@@ -76,6 +90,32 @@ ASTNode *functionReduce(ParseTreeItem *item)
   ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 1)->word);
   addSubNode(node, parseTreeSubItem(item, 3)->astNode);
   addSubNode(node, parseTreeSubItem(item, 6)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 8)->astNode);
+  return node;
+}
+
+ASTNode *ifBranchReduce(ParseTreeItem *item)
+{  
+  ASTNode *node = createASTNode(item->rule, NULL);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 5)->astNode);
+  return node;
+}
+
+ASTNode *ifElseBranchReduce(ParseTreeItem *item)
+{  
+  ASTNode *node = createASTNode(item->rule, NULL);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 5)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 9)->astNode);
+  return node;
+}
+
+ASTNode *whileBranchReduce(ParseTreeItem *item)
+{  
+  ASTNode *node = createASTNode(item->rule, NULL);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  addSubNode(node, parseTreeSubItem(item, 5)->astNode);
   return node;
 }
 
@@ -143,6 +183,13 @@ ASTNode *comparisonReduce(ParseTreeItem *item)
   return node;
 }
 
+ASTNode *stringConcatReduce(ParseTreeItem *item)
+{
+  ASTNode *node = createASTNode(item->rule, parseTreeSubItem(item, 0)->word);
+  addSubNode(node, parseTreeSubItem(item, 2)->astNode);
+  return node;
+}
+
 ParserTable *createLangParser()
 {
   ScannerConfig *config = createLangScanner();
@@ -153,17 +200,19 @@ ParserTable *createLangParser()
   addProduction(grammar, "Declaration", "DeclareVariable", NULL);
   addProduction(grammar, "Declaration", EMPTY, NULL);
   addProduction(grammar, "Declaration", "Function", NULL);
-  addProduction(grammar, "DeclareVariable", "val Assignment ;", variableAssignmentReduce);
-  addProduction(grammar, "DeclareVariable", "var Assignment ;", variableAssignmentReduce);
-  addProduction(grammar, "DeclareVariable", "var identifier ;", variableAssignmentReduce);
+  addProduction(grammar, "DeclareVariable", "val identifier : Type = Value ;", variableInitAssignmentReduce);
+  addProduction(grammar, "DeclareVariable", "var identifier : Type = Value ;", variableInitAssignmentReduce);
+  addProduction(grammar, "DeclareVariable", "var identifier : Type ;", variableAssignmentReduce);
   addProduction(grammar, "Assignment", "identifier = Value", assignmentReduce);
   addProduction(grammar, "Value", "identifier", NULL);
   addProduction(grammar, "Value", "integer", NULL);
   addProduction(grammar, "Value", "Calculation", NULL);
+  addProduction(grammar, "Value", "StringConcatenation", NULL);
   addProduction(grammar, "Value", "string", NULL);
   addProduction(grammar, "Value", "FunctionCall", NULL);
   addProduction(grammar, "Value", "Comparison", NULL);
-  addProduction(grammar, "Function", "def identifier ( FunctionParameters ) { Expressions }", functionReduce);
+  addProduction(grammar, "Type", "identifier", NULL);
+  addProduction(grammar, "Function", "def identifier ( FunctionParameters ) : Type { Expressions }", functionReduce);
   addProduction(grammar, "FunctionParameters", "FunctionParameters , Value", functionParametersReduce);
   addProduction(grammar, "FunctionParameters", "Value", singleFunctionParametersReduce);
   addProduction(grammar, "FunctionParameters", EMPTY, emptyReduce);
@@ -174,8 +223,11 @@ ParserTable *createLangParser()
   addProduction(grammar, "Expression", "Assignment ;", expression1Reduce);
   addProduction(grammar, "Expression", "Value ;", expression1Reduce);
   addProduction(grammar, "Expression", "Return ;", expression1Reduce);
+  addProduction(grammar, "Expression", "IfBranch", expression1Reduce);
+  addProduction(grammar, "Expression", "WhileLoop", expression1Reduce);
   addProduction(grammar, "Return", "return Value", returnReduce);
   addProduction(grammar, "Expression", EMPTY, emptyReduce);
+  addProduction(grammar, "StringConcatenation", "string + Value", stringConcatReduce);
   addProduction(grammar, "Calculation", "Calculation + Term", calculationReduce);
   addProduction(grammar, "Calculation", "Calculation - Term", calculationReduce);
   addProduction(grammar, "Calculation", "Term", NULL);
@@ -186,6 +238,9 @@ ParserTable *createLangParser()
   addProduction(grammar, "Factor", "identifier", NULL);
   addProduction(grammar, "Factor", "integer", NULL);
   addProduction(grammar, "Comparison", "Value comp Value", comparisonReduce);
+  addProduction(grammar, "IfBranch", "if ( Value ) { Expressions } else { Expressions }", ifElseBranchReduce);  
+  addProduction(grammar, "IfBranch", "if ( Value ) { Expressions }", ifBranchReduce);
+  addProduction(grammar, "WhileLoop", "while ( Value ) { Expressions }", whileBranchReduce);
 
   return createParser(grammar, "Goal");
 }

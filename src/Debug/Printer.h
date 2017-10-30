@@ -23,4 +23,6 @@ void printParseTree(ParseTree *tree);
 
 void printAST(ParseTree *tree);
 
+char *str_replace(char *orig, char *rep, char *with);    
+
 #endif
